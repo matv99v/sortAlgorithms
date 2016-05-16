@@ -1,22 +1,17 @@
 import React from 'react';
-import Bar from './Bar.jsx';
+import Bar   from './Bar.jsx';
+
+import asyncIterator    from '../utils/asyncIterator';
+import swapArrMembers   from '../utils/swapArrMembers';
+import delayFuncPromise from '../utils/delayFuncPromise';
 
 export default class App extends React.Component {
     state = {
-        delay: 25,
-        numOfElements: 50,
+        delay: 1000,
+        numOfElements: 25,
         array: [],
         checkInd: [],
         status: null
-    };
-
-    delayPromise = func => {
-        return new Promise(resolve => {
-            setTimeout( () => {
-                func();
-                resolve();
-            }, this.state.delay);
-        });
     };
 
     componentWillMount = () => { // fill up array with random values
@@ -32,88 +27,34 @@ export default class App extends React.Component {
     };
 
     componentDidMount = () => {
-        this.asyncLoop(
-            this.state.numOfElements,
-            this.processIteration,
+        asyncIterator(
+            // number of iteration steps
+            this.state.numOfElements - 1,
+
+            // itreration body
+            loop => {
+                const cInd = loop.getIteration();
+                const nInd = cInd + 1;
+                const {array} = this.state;
+
+                delayFuncPromise(() => {
+                    this.setState({
+                        status  : array[cInd] > array[nInd] ? 'swap' : 'iterate',
+                        checkInd: [cInd, nInd]
+                    });
+                }, this.state.delay)
+                .then(() => {
+                    console.log(`${cInd} - [${array[cInd]}, ${array[nInd]}] ${this.state.status}`);
+                })
+                .then(loop.next);
+            },
+
+            // iteration is  over
             () => {
-                this.setState({status: 'finished', checkInd: [] });
+                console.log('done');
             }
+
         );
-    };
-
-    processIteration = loop => {
-        const iterationInd = loop.getIteration();
-        const compareInd   = iterationInd - 1;
-        this.setState({checkInd: [compareInd, iterationInd]});
-
-        const swapping = () => {
-            const array = this.swap(compareInd, iterationInd);
-            this.setState({array});
-        };
-
-        if (this.state.array[compareInd] > this.state.array[iterationInd]) { // compare elements
-            this.setState({status: 'swap'});
-            this.delayPromise(swapping).then(loop.reset).then(loop.next);
-        } else {
-            this.setState({status: 'iterate'});
-            this.delayPromise(loop.next);
-        }
-    }
-
-    asyncLoop = (iterations, mainWorkFunc, callback) => {
-        let index = 1;
-        let done  = false;
-
-        const loop = {
-            next() {
-                if (done) {
-                    return;
-                }
-                if (index < iterations) {
-                    index++;
-                    mainWorkFunc(loop);
-                } else {
-                    done = true;
-                    callback(); // eslint-disable-line
-                }
-            },
-            getIteration() {
-                return index - 1;
-            },
-            break() {
-                done = true;
-                callback();
-            },
-            reset() {
-                index = 1;
-            }
-        };
-
-        loop.next();
-        return loop;
-    };
-
-    swap = (p, c) => {
-        const array = [...this.state.array];
-        const buffer = array[p];
-        array[p] = array[c];
-        array[c] = buffer;
-        return array;
-    };
-
-    getColor = (i) => {
-        if (this.state.checkInd.indexOf(i) > -1) {
-
-            switch (this.state.status) {
-                case 'iterate':
-                    return 'yellow';
-                case 'swap':
-                    return 'red';
-                default:
-                    return;
-            }
-
-        }
     };
 
     render() {
@@ -122,8 +63,8 @@ export default class App extends React.Component {
                 {
                     this.state.array.map( (el, i) => {
                         return <Bar amount = {el}
-                                    color  = {this.getColor(i)}
                                     key    = {i}
+                                    color  = {el.color}
                         />;
                     })
                 }

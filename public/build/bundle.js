@@ -20173,9 +20173,19 @@
 	
 	var _Bar2 = _interopRequireDefault(_Bar);
 	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	var _asyncIterator = __webpack_require__(174);
 	
-	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+	var _asyncIterator2 = _interopRequireDefault(_asyncIterator);
+	
+	var _swapArrMembers = __webpack_require__(175);
+	
+	var _swapArrMembers2 = _interopRequireDefault(_swapArrMembers);
+	
+	var _delayFuncPromise = __webpack_require__(176);
+	
+	var _delayFuncPromise2 = _interopRequireDefault(_delayFuncPromise);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
@@ -20198,18 +20208,11 @@
 	        }
 	
 	        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_Object$getPrototypeO = Object.getPrototypeOf(App)).call.apply(_Object$getPrototypeO, [this].concat(args))), _this), _this.state = {
-	            delay: 25,
-	            numOfElements: 50,
+	            delay: 1000,
+	            numOfElements: 25,
 	            array: [],
 	            checkInd: [],
 	            status: null
-	        }, _this.delayPromise = function (func) {
-	            return new Promise(function (resolve) {
-	                setTimeout(function () {
-	                    func();
-	                    resolve();
-	                }, _this.state.delay);
-	            });
 	        }, _this.componentWillMount = function () {
 	            // fill up array with random values
 	            var i = _this.state.numOfElements;
@@ -20222,91 +20225,44 @@
 	            }
 	            _this.setState({ array: array });
 	        }, _this.componentDidMount = function () {
-	            _this.asyncLoop(_this.state.numOfElements, _this.processIteration, function () {
-	                _this.setState({ status: 'finished', checkInd: [] });
+	            (0, _asyncIterator2.default)(
+	            // number of iteration steps
+	            _this.state.numOfElements - 1,
+	
+	            // itreration body
+	            function (loop) {
+	                var cInd = loop.getIteration();
+	                var nInd = cInd + 1;
+	                var array = _this.state.array;
+	
+	
+	                (0, _delayFuncPromise2.default)(function () {
+	                    _this.setState({
+	                        status: array[cInd] > array[nInd] ? 'swap' : 'iterate',
+	                        checkInd: [cInd, nInd]
+	                    });
+	                }, _this.state.delay).then(function () {
+	                    console.log(cInd + ' - [' + array[cInd] + ', ' + array[nInd] + '] ' + _this.state.status);
+	                }).then(loop.next);
+	            },
+	
+	            // iteration is  over
+	            function () {
+	                console.log('done');
 	            });
-	        }, _this.processIteration = function (loop) {
-	            var iterationInd = loop.getIteration();
-	            var compareInd = iterationInd - 1;
-	            _this.setState({ checkInd: [compareInd, iterationInd] });
-	
-	            var swapping = function swapping() {
-	                var array = _this.swap(compareInd, iterationInd);
-	                _this.setState({ array: array });
-	            };
-	
-	            if (_this.state.array[compareInd] > _this.state.array[iterationInd]) {
-	                // compare elements
-	                _this.setState({ status: 'swap' });
-	                _this.delayPromise(swapping).then(loop.reset).then(loop.next);
-	            } else {
-	                _this.setState({ status: 'iterate' });
-	                _this.delayPromise(loop.next);
-	            }
-	        }, _this.asyncLoop = function (iterations, mainWorkFunc, callback) {
-	            var index = 1;
-	            var done = false;
-	
-	            var loop = {
-	                next: function next() {
-	                    if (done) {
-	                        return;
-	                    }
-	                    if (index < iterations) {
-	                        index++;
-	                        mainWorkFunc(loop);
-	                    } else {
-	                        done = true;
-	                        callback(); // eslint-disable-line
-	                    }
-	                },
-	                getIteration: function getIteration() {
-	                    return index - 1;
-	                },
-	                break: function _break() {
-	                    done = true;
-	                    callback();
-	                },
-	                reset: function reset() {
-	                    index = 1;
-	                }
-	            };
-	
-	            loop.next();
-	            return loop;
-	        }, _this.swap = function (p, c) {
-	            var array = [].concat(_toConsumableArray(_this.state.array));
-	            var buffer = array[p];
-	            array[p] = array[c];
-	            array[c] = buffer;
-	            return array;
-	        }, _this.getColor = function (i) {
-	            if (_this.state.checkInd.indexOf(i) > -1) {
-	
-	                switch (_this.state.status) {
-	                    case 'iterate':
-	                        return 'yellow';
-	                    case 'swap':
-	                        return 'red';
-	                    default:
-	                        return;
-	                }
-	            }
 	        }, _temp), _possibleConstructorReturn(_this, _ret);
 	    }
 	
 	    _createClass(App, [{
 	        key: 'render',
 	        value: function render() {
-	            var _this2 = this;
-	
 	            return _react2.default.createElement(
 	                'div',
 	                null,
 	                this.state.array.map(function (el, i) {
 	                    return _react2.default.createElement(_Bar2.default, { amount: el,
-	                        color: _this2.getColor(i),
-	                        key: i
+	                        key: i,
+	                        color: el.color
 	                    });
 	                })
 	            );
@@ -20712,6 +20668,86 @@
 			URL.revokeObjectURL(oldSrc);
 	}
 
+
+/***/ },
+/* 174 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.default = asyncLoop;
+	function asyncLoop(iterations, iterationBody, callback) {
+	    var index = 0;
+	    var done = false;
+	
+	    var loop = {
+	        next: function next() {
+	            if (done) {
+	                return;
+	            }
+	            if (index < iterations) {
+	                index++;
+	                iterationBody(loop);
+	            } else {
+	                done = true;
+	                callback(); // eslint-disable-line
+	            }
+	        },
+	        getIteration: function getIteration() {
+	            return index - 1;
+	        },
+	        break: function _break() {
+	            done = true;
+	            callback();
+	        },
+	        reset: function reset() {
+	            index = 1;
+	        }
+	    };
+	
+	    loop.next();
+	    return loop;
+	}
+
+/***/ },
+/* 175 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	exports.default = function (array, p, c) {
+	    var buffer = array[p];
+	    array[p] = array[c];
+	    array[c] = buffer;
+	
+	    return array;
+	};
+
+/***/ },
+/* 176 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	exports.default = function (func, ms) {
+	    return new Promise(function (resolve) {
+	        setTimeout(function () {
+	            func();
+	            resolve();
+	        }, ms);
+	    });
+	};
 
 /***/ }
 /******/ ]);
