@@ -20173,6 +20173,10 @@
 	
 	var _Bar2 = _interopRequireDefault(_Bar);
 	
+	var _Slider = __webpack_require__(195);
+	
+	var _Slider2 = _interopRequireDefault(_Slider);
+	
 	var _asyncIterator = __webpack_require__(174);
 	
 	var _asyncIterator2 = _interopRequireDefault(_asyncIterator);
@@ -20208,61 +20212,96 @@
 	        }
 	
 	        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_Object$getPrototypeO = Object.getPrototypeOf(App)).call.apply(_Object$getPrototypeO, [this].concat(args))), _this), _this.state = {
-	            delay: 1000,
+	            delay: 250,
 	            numOfElements: 25,
 	            array: [],
 	            checkInd: [],
 	            status: null
 	        }, _this.componentWillMount = function () {
-	            // fill up array with random values
 	            var i = _this.state.numOfElements;
 	            var array = [];
 	
 	            while (i) {
 	                --i;
-	                var rndNum = Math.floor(Math.random() * 100);
+	                var rndNum = Math.floor(Math.random() * 100) + 1;
 	                array.push(rndNum);
 	            }
+	
 	            _this.setState({ array: array });
 	        }, _this.componentDidMount = function () {
+	
 	            (0, _asyncIterator2.default)(
 	            // number of iteration steps
 	            _this.state.numOfElements - 1,
 	
 	            // itreration body
 	            function (loop) {
-	                var cInd = loop.getIteration();
-	                var nInd = cInd + 1;
+	                var iCurr = loop.getIteration();
+	                var iNext = iCurr + 1;
 	                var array = _this.state.array;
 	
 	
-	                (0, _delayFuncPromise2.default)(function () {
+	                (0, _delayFuncPromise2.default)(_this.state.delay, function () {
 	                    _this.setState({
-	                        status: array[cInd] > array[nInd] ? 'swap' : 'iterate',
-	                        checkInd: [cInd, nInd]
+	                        checkInd: [iCurr, iNext],
+	                        status: array[iCurr] > array[iNext] ? 'swap' : 'iterate'
 	                    });
-	                }, _this.state.delay).then(function () {
-	                    console.log(cInd + ' - [' + array[cInd] + ', ' + array[nInd] + '] ' + _this.state.status);
+	                }).then(function () {
+	                    if (_this.state.status === 'swap') {
+	                        return (0, _delayFuncPromise2.default)(_this.state.delay, function () {
+	                            _this.setState({ array: (0, _swapArrMembers2.default)(_this.state.array, _this.state.checkInd) });
+	                            loop.reset();
+	                        });
+	                    }
 	                }).then(loop.next);
 	            },
 	
 	            // iteration is  over
 	            function () {
-	                console.log('done');
+	                (0, _delayFuncPromise2.default)(_this.state.delay, function () {
+	                    _this.setState({
+	                        checkInd: [],
+	                        status: 'sorted'
+	                    });
+	                });
 	            });
+	        }, _this.handleRangeChange = function (delay) {
+	            _this.setState({ delay: delay });
 	        }, _temp), _possibleConstructorReturn(_this, _ret);
 	    }
+	
+	    // fill up array with random values in range [1; 100]
+	
 	
 	    _createClass(App, [{
 	        key: 'render',
 	        value: function render() {
+	            var _this2 = this;
+	
 	            return _react2.default.createElement(
 	                'div',
 	                null,
+	                _react2.default.createElement(_Slider2.default, { onRangeChange: this.handleRangeChange,
+	                    delay: this.state.delay
+	                }),
+	                _react2.default.createElement(
+	                    'p',
+	                    null,
+	                    'Delay: ',
+	                    this.state.delay,
+	                    ' ms'
+	                ),
 	                this.state.array.map(function (el, i) {
 	                    return _react2.default.createElement(_Bar2.default, { amount: el,
 	                        key: i,
-	                        color: el.color
+	                        color: function () {
+	                            if (_this2.state.status === 'iterate' && _this2.state.checkInd.indexOf(i) !== -1) {
+	                                return 'yellow';
+	                            }
+	                            if (_this2.state.status === 'swap' && _this2.state.checkInd.indexOf(i) !== -1) {
+	                                return 'red';
+	                            }
+	                        }()
 	                    });
 	                })
 	            );
@@ -20312,7 +20351,11 @@
 	    _createClass(Bar, [{
 	        key: 'render',
 	        value: function render() {
-	            return _react2.default.createElement('div', { className: 'Bar__bar', style: { backgroundColor: this.props.color, width: this.props.amount + '%' } });
+	            return _react2.default.createElement('div', { className: 'Bar__bar',
+	                style: {
+	                    backgroundColor: this.props.color,
+	                    width: this.props.amount + '%'
+	                } });
 	        }
 	    }]);
 	
@@ -20356,7 +20399,7 @@
 	
 	
 	// module
-	exports.push([module.id, ".Bar__bar {\n  background-color: #006666;\n  height: 10px;\n  margin: 2px;\n}\n", ""]);
+	exports.push([module.id, ".Bar__bar {\n  background-color: #006666;\n  height: 10px;\n  margin: 2px;\n  width: 100%;\n}\n", ""]);
 	
 	// exports
 
@@ -20704,7 +20747,7 @@
 	            callback();
 	        },
 	        reset: function reset() {
-	            index = 1;
+	            index = 0;
 	        }
 	    };
 	
@@ -20722,7 +20765,14 @@
 	    value: true
 	});
 	
-	exports.default = function (array, p, c) {
+	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+	
+	exports.default = function (array, _ref) {
+	    var _ref2 = _slicedToArray(_ref, 2);
+	
+	    var p = _ref2[0];
+	    var c = _ref2[1];
+	
 	    var buffer = array[p];
 	    array[p] = array[c];
 	    array[c] = buffer;
@@ -20740,7 +20790,7 @@
 	    value: true
 	});
 	
-	exports.default = function (func, ms) {
+	exports.default = function (ms, func) {
 	    return new Promise(function (resolve) {
 	        setTimeout(function () {
 	            func();
@@ -20748,6 +20798,460 @@
 	        }, ms);
 	    });
 	};
+
+/***/ },
+/* 177 */,
+/* 178 */,
+/* 179 */,
+/* 180 */,
+/* 181 */,
+/* 182 */,
+/* 183 */,
+/* 184 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+	
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+	
+	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _reactDom = __webpack_require__(33);
+	
+	var _classnames = __webpack_require__(185);
+	
+	var _classnames2 = _interopRequireDefault(_classnames);
+	
+	function capitalize(str) {
+	  return str.charAt(0).toUpperCase() + str.substr(1);
+	}
+	
+	function maxmin(pos, min, max) {
+	  if (pos < min) {
+	    return min;
+	  }
+	  if (pos > max) {
+	    return max;
+	  }
+	  return pos;
+	}
+	
+	var constants = {
+	  orientation: {
+	    horizontal: {
+	      dimension: 'width',
+	      direction: 'left',
+	      coordinate: 'x'
+	    },
+	    vertical: {
+	      dimension: 'height',
+	      direction: 'top',
+	      coordinate: 'y'
+	    }
+	  }
+	};
+	
+	var Slider = (function (_Component) {
+	  _inherits(Slider, _Component);
+	
+	  function Slider() {
+	    var _this = this;
+	
+	    _classCallCheck(this, Slider);
+	
+	    _get(Object.getPrototypeOf(Slider.prototype), 'constructor', this).apply(this, arguments);
+	
+	    this.state = {
+	      limit: 0,
+	      grab: 0
+	    };
+	
+	    this.handleSliderMouseDown = function (e) {
+	      var value = undefined;var onChange = _this.props.onChange;
+	
+	      if (!onChange) return;
+	
+	      value = _this.position(e);
+	      onChange && onChange(value);
+	    };
+	
+	    this.handleKnobMouseDown = function () {
+	      document.addEventListener('mousemove', _this.handleDrag);
+	      document.addEventListener('mouseup', _this.handleDragEnd);
+	    };
+	
+	    this.handleDrag = function (e) {
+	      var value = undefined;var onChange = _this.props.onChange;
+	
+	      if (!onChange) return;
+	
+	      value = _this.position(e);
+	      onChange && onChange(value);
+	    };
+	
+	    this.handleDragEnd = function () {
+	      document.removeEventListener('mousemove', _this.handleDrag);
+	      document.removeEventListener('mouseup', _this.handleDragEnd);
+	    };
+	
+	    this.handleNoop = function (e) {
+	      e.stopPropagation();
+	      e.preventDefault();
+	    };
+	
+	    this.handleTouchMove = function (e) {
+	      _this.handleDrag(e);
+	    };
+	
+	    this.getPositionFromValue = function (value) {
+	      var percentage = undefined,
+	          pos = undefined;
+	      var limit = _this.state.limit;
+	      var _props = _this.props;
+	      var min = _props.min;
+	      var max = _props.max;
+	
+	      percentage = (value - min) / (max - min);
+	      pos = Math.round(percentage * limit);
+	
+	      return pos;
+	    };
+	
+	    this.getValueFromPosition = function (pos) {
+	      var percentage = undefined,
+	          value = undefined;
+	      var limit = _this.state.limit;
+	      var _props2 = _this.props;
+	      var orientation = _props2.orientation;
+	      var min = _props2.min;
+	      var max = _props2.max;
+	      var step = _props2.step;
+	
+	      percentage = maxmin(pos, 0, limit) / (limit || 1);
+	
+	      if (orientation === 'horizontal') {
+	        value = step * Math.round(percentage * (max - min) / step) + min;
+	      } else {
+	        value = max - (step * Math.round(percentage * (max - min) / step) + min);
+	      }
+	
+	      return value;
+	    };
+	
+	    this.position = function (e) {
+	      var pos = undefined;var value = undefined;var grab = _this.state.grab;
+	      var orientation = _this.props.orientation;
+	
+	      var node = (0, _reactDom.findDOMNode)(_this.refs.slider);
+	      var coordinateStyle = constants.orientation[orientation].coordinate;
+	      var directionStyle = constants.orientation[orientation].direction;
+	      var coordinate = !e.touches ? e['client' + capitalize(coordinateStyle)] : e.touches[0]['client' + capitalize(coordinateStyle)];
+	      var direction = node.getBoundingClientRect()[directionStyle];
+	
+	      pos = coordinate - direction - grab;
+	      value = _this.getValueFromPosition(pos);
+	
+	      return value;
+	    };
+	
+	    this.coordinates = function (pos) {
+	      var value = undefined,
+	          fillPos = undefined,
+	          handlePos = undefined;
+	      var _state = _this.state;
+	      var limit = _state.limit;
+	      var grab = _state.grab;
+	      var orientation = _this.props.orientation;
+	
+	      value = _this.getValueFromPosition(pos);
+	      handlePos = _this.getPositionFromValue(value);
+	
+	      if (orientation === 'horizontal') {
+	        fillPos = handlePos + grab;
+	      } else {
+	        fillPos = limit - handlePos + grab;
+	      }
+	
+	      return {
+	        fill: fillPos,
+	        handle: handlePos
+	      };
+	    };
+	  }
+	
+	  _createClass(Slider, [{
+	    key: 'componentDidMount',
+	
+	    // Add window resize event listener here
+	    value: function componentDidMount() {
+	      var orientation = this.props.orientation;
+	
+	      var dimension = capitalize(constants.orientation[orientation].dimension);
+	      var sliderPos = (0, _reactDom.findDOMNode)(this.refs.slider)['offset' + dimension];
+	      var handlePos = (0, _reactDom.findDOMNode)(this.refs.handle)['offset' + dimension];
+	      this.setState({
+	        limit: sliderPos - handlePos,
+	        grab: handlePos / 2
+	      });
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      var dimension = undefined,
+	          direction = undefined,
+	          position = undefined,
+	          coords = undefined,
+	          fillStyle = undefined,
+	          handleStyle = undefined;
+	      var _props3 = this.props;
+	      var value = _props3.value;
+	      var orientation = _props3.orientation;
+	      var className = _props3.className;
+	
+	      dimension = constants.orientation[orientation].dimension;
+	      direction = constants.orientation[orientation].direction;
+	
+	      position = this.getPositionFromValue(value);
+	      coords = this.coordinates(position);
+	
+	      fillStyle = _defineProperty({}, dimension, coords.fill + 'px');
+	      handleStyle = _defineProperty({}, direction, coords.handle + 'px');
+	
+	      return _react2['default'].createElement(
+	        'div',
+	        {
+	          ref: 'slider',
+	          className: (0, _classnames2['default'])('rangeslider ', 'rangeslider-' + orientation, className),
+	          onMouseDown: this.handleSliderMouseDown,
+	          onClick: this.handleNoop },
+	        _react2['default'].createElement('div', {
+	          ref: 'fill',
+	          className: 'rangeslider__fill',
+	          style: fillStyle }),
+	        _react2['default'].createElement('div', {
+	          ref: 'handle',
+	          className: 'rangeslider__handle',
+	          onMouseDown: this.handleKnobMouseDown,
+	          onTouchMove: this.handleTouchMove,
+	          onClick: this.handleNoop,
+	          style: handleStyle })
+	      );
+	    }
+	  }], [{
+	    key: 'propTypes',
+	    value: {
+	      min: _react.PropTypes.number,
+	      max: _react.PropTypes.number,
+	      step: _react.PropTypes.number,
+	      value: _react.PropTypes.number,
+	      orientation: _react.PropTypes.string,
+	      onChange: _react.PropTypes.func,
+	      className: _react.PropTypes.string
+	    },
+	    enumerable: true
+	  }, {
+	    key: 'defaultProps',
+	    value: {
+	      min: 0,
+	      max: 100,
+	      step: 1,
+	      value: 0,
+	      orientation: 'horizontal'
+	    },
+	    enumerable: true
+	  }]);
+	
+	  return Slider;
+	})(_react.Component);
+	
+	exports['default'] = Slider;
+	module.exports = exports['default'];
+
+/***/ },
+/* 185 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
+	  Copyright (c) 2016 Jed Watson.
+	  Licensed under the MIT License (MIT), see
+	  http://jedwatson.github.io/classnames
+	*/
+	/* global define */
+	
+	(function () {
+		'use strict';
+	
+		var hasOwn = {}.hasOwnProperty;
+	
+		function classNames () {
+			var classes = [];
+	
+			for (var i = 0; i < arguments.length; i++) {
+				var arg = arguments[i];
+				if (!arg) continue;
+	
+				var argType = typeof arg;
+	
+				if (argType === 'string' || argType === 'number') {
+					classes.push(arg);
+				} else if (Array.isArray(arg)) {
+					classes.push(classNames.apply(null, arg));
+				} else if (argType === 'object') {
+					for (var key in arg) {
+						if (hasOwn.call(arg, key) && arg[key]) {
+							classes.push(key);
+						}
+					}
+				}
+			}
+	
+			return classes.join(' ');
+		}
+	
+		if (typeof module !== 'undefined' && module.exports) {
+			module.exports = classNames;
+		} else if (true) {
+			// register as 'classnames', consistent with npm package name
+			!(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = function () {
+				return classNames;
+			}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+		} else {
+			window.classNames = classNames;
+		}
+	}());
+
+
+/***/ },
+/* 186 */,
+/* 187 */,
+/* 188 */,
+/* 189 */,
+/* 190 */,
+/* 191 */,
+/* 192 */,
+/* 193 */,
+/* 194 */,
+/* 195 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _reactRangeslider = __webpack_require__(184);
+	
+	var _reactRangeslider2 = _interopRequireDefault(_reactRangeslider);
+	
+	__webpack_require__(196);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var Slider = function (_React$Component) {
+	    _inherits(Slider, _React$Component);
+	
+	    function Slider() {
+	        var _Object$getPrototypeO;
+	
+	        var _temp, _this, _ret;
+	
+	        _classCallCheck(this, Slider);
+	
+	        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+	            args[_key] = arguments[_key];
+	        }
+	
+	        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_Object$getPrototypeO = Object.getPrototypeOf(Slider)).call.apply(_Object$getPrototypeO, [this].concat(args))), _this), _this.state = { value: 10 }, _this.handleChange = function (newDelay) {
+	            _this.props.onRangeChange(newDelay);
+	        }, _temp), _possibleConstructorReturn(_this, _ret);
+	    }
+	
+	    _createClass(Slider, [{
+	        key: 'render',
+	        value: function render() {
+	            return _react2.default.createElement(_reactRangeslider2.default, {
+	                value: this.props.delay,
+	                orientation: 'horizontal',
+	                onChange: this.handleChange,
+	                min: 25,
+	                max: 1000
+	            });
+	        }
+	    }]);
+	
+	    return Slider;
+	}(_react2.default.Component);
+	
+	exports.default = Slider;
+
+/***/ },
+/* 196 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+	
+	// load the styles
+	var content = __webpack_require__(197);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(173)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../../node_modules/css-loader/index.js!./../../node_modules/autoprefixer-loader/index.js!./../../node_modules/less-loader/index.js!./Slider.less", function() {
+				var newContent = require("!!./../../node_modules/css-loader/index.js!./../../node_modules/autoprefixer-loader/index.js!./../../node_modules/less-loader/index.js!./Slider.less");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 197 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(172)();
+	// imports
+	
+	
+	// module
+	exports.push([module.id, "/**\n * Rangeslider\n */\n.rangeslider {\n  margin: 20px 0;\n  position: relative;\n  background: #e6e6e6;\n}\n.rangeslider .rangeslider__fill,\n.rangeslider .rangeslider__handle {\n  position: absolute;\n}\n.rangeslider,\n.rangeslider .rangeslider__fill {\n  display: block;\n  box-shadow: inset 0px 1px 3px rgba(0, 0, 0, 0.3);\n}\n.rangeslider .rangeslider__handle {\n  background: #fff;\n  border: 1px solid #ccc;\n  cursor: pointer;\n  display: inline-block;\n  position: absolute;\n}\n.rangeslider .rangeslider__handle:active {\n  background: #999;\n}\n/**\n * Rangeslider - Horizontal slider\n */\n.rangeslider-horizontal {\n  height: 20px;\n  border-radius: 10px;\n}\n.rangeslider-horizontal .rangeslider__fill {\n  height: 100%;\n  background: #27ae60;\n  border-radius: 10px;\n  top: 0;\n}\n.rangeslider-horizontal .rangeslider__handle {\n  width: 40px;\n  height: 40px;\n  border-radius: 40px;\n  top: -10px;\n}\n/**\n * Rangeslider - Vertical slider\n */\n.rangeslider-vertical {\n  margin: 20px auto;\n  height: 150px;\n  max-width: 10px;\n  background: none;\n}\n.rangeslider-vertical .rangeslider__fill {\n  width: 100%;\n  background: #27ae60;\n  box-shadow: none;\n  bottom: 0;\n}\n.rangeslider-vertical .rangeslider__handle {\n  width: 30px;\n  height: 10px;\n  left: -10px;\n}\n.rangeslider-vertical .rangeslider__handle:active {\n  box-shadow: none;\n}\n", ""]);
+	
+	// exports
+
 
 /***/ }
 /******/ ]);

@@ -1,4 +1,4 @@
-export default function(array, p, c) {
+export default function(array, [p, c]) {
     const buffer = array[p];
     array[p]     = array[c];
     array[c]     = buffer;

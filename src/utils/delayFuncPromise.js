@@ -1,4 +1,4 @@
-export default function(func, ms) {
+export default function(ms, func) {
     return new Promise(resolve => {
         setTimeout( () => {
             func();

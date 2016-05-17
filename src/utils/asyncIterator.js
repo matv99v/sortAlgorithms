@@ -23,7 +23,7 @@ export default function asyncLoop(iterations, iterationBody, callback) {
             callback();
         },
         reset() {
-            index = 1;
+            index = 0;
         }
     };
 
