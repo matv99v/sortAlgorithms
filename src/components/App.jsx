@@ -10,7 +10,7 @@ import delayFuncPromise from '../utils/delayFuncPromise';
 export default class App extends React.Component {
     state = {
         delay        : 250,
-        numOfElements: 30,
+        numOfElements: 25,
         array        : [],
         checkInd     : [],
         status       : null
@@ -38,40 +38,42 @@ export default class App extends React.Component {
 
             // itreration body
             loop => {
-                const iCurr    = loop.getIteration();
-                const iNext    = iCurr + 1;
-                const {array}  = this.state;
+                console.log('----====iteration====----');
+                const iCurr        = loop.getIteration();
+                const iNext        = iCurr + 1;
+                const {array}      = this.state;
+                const boundPromise = delayFuncPromise.bind(null, this.state.delay);
 
-                delayFuncPromise(this.state.delay,
-                    () => {
-                        this.setState({
-                            checkInd: [iCurr, iNext],
-                            status  : array[iCurr] > array[iNext] ? 'swap' : 'iterate'
+
+                boundPromise( () => {
+                    console.log(`compare array ind ${iCurr} and ${iNext}`);
+                    this.setState({
+                        checkInd: [iCurr, iNext],
+                        status  : array[iCurr] > array[iNext] ? 'swap' : 'iterate'
+                    });
+                })
+                .then( () => {
+                    console.log(`what should be done: ${this.state.status}`);
+                    if (this.state.status === 'swap') {
+                        return boundPromise( () => {
+                            console.log('!!!swapping elements, i = 0!!!');
+                            this.setState({ array: swapArrMembers(this.state.array, this.state.checkInd) });
+                            loop.reset();
                         });
                     }
-                ).then(() => {
-                    if (this.state.status === 'swap') {
-                        return delayFuncPromise(this.state.delay,
-                            () => {
-                                this.setState({ array: swapArrMembers(this.state.array, this.state.checkInd) });
-                                loop.reset();
-                            }
-                        );
-                    }
-                }).then(loop.next);
+                })
+                .then(loop.next);
             },
 
             // iteration is  over
             () => {
-
-                delayFuncPromise(this.state.delay,
-                    () => {
-                        this.setState({
-                            checkInd: [],
-                            status  : 'sorted'
-                        });
-                    }
-                );
+                delayFuncPromise(this.state.delay, () => {
+                    this.setState({
+                        checkInd: [],
+                        status  : 'sorted'
+                    });
+                    console.log('sorted!');
+                });
             }
         );
     };

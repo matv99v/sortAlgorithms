@@ -20213,7 +20213,7 @@
 	
 	        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_Object$getPrototypeO = Object.getPrototypeOf(App)).call.apply(_Object$getPrototypeO, [this].concat(args))), _this), _this.state = {
 	            delay: 250,
-	            numOfElements: 30,
+	            numOfElements: 25,
 	            array: [],
 	            checkInd: [],
 	            status: null
@@ -20236,19 +20236,24 @@
 	
 	            // itreration body
 	            function (loop) {
+	                console.log('----====iteration====----');
 	                var iCurr = loop.getIteration();
 	                var iNext = iCurr + 1;
 	                var array = _this.state.array;
 	
+	                var boundPromise = _delayFuncPromise2.default.bind(null, _this.state.delay);
 	
-	                (0, _delayFuncPromise2.default)(_this.state.delay, function () {
+	                boundPromise(function () {
+	                    console.log('compare array ind ' + iCurr + ' and ' + iNext);
 	                    _this.setState({
 	                        checkInd: [iCurr, iNext],
 	                        status: array[iCurr] > array[iNext] ? 'swap' : 'iterate'
 	                    });
 	                }).then(function () {
+	                    console.log('what should be done: ' + _this.state.status);
 	                    if (_this.state.status === 'swap') {
-	                        return (0, _delayFuncPromise2.default)(_this.state.delay, function () {
+	                        return boundPromise(function () {
+	                            console.log('!!!swapping elements, i = 0!!!');
 	                            _this.setState({ array: (0, _swapArrMembers2.default)(_this.state.array, _this.state.checkInd) });
 	                            loop.reset();
 	                        });
@@ -20258,12 +20263,12 @@
 	
 	            // iteration is  over
 	            function () {
-	
 	                (0, _delayFuncPromise2.default)(_this.state.delay, function () {
 	                    _this.setState({
 	                        checkInd: [],
 	                        status: 'sorted'
 	                    });
+	                    console.log('sorted!');
 	                });
 	            });
 	        }, _this.handleRangeChange = function (delay) {
@@ -20776,7 +20781,7 @@
 	                    orientation: 'horizontal',
 	                    onChange: this.handleChange,
 	                    min: 5,
-	                    max: 1000
+	                    max: 2000
 	                })
 	            );
 	        }

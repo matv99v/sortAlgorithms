@@ -16,7 +16,7 @@ export default class Slider extends React.Component {
                     orientation="horizontal"
                     onChange={this.handleChange}
                     min = {5}
-                    max = {1000}
+                    max = {2000}
                 />
             </div>
         );
