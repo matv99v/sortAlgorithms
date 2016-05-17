@@ -12,13 +12,15 @@ export default class Slider extends React.Component {
 
     render() {
         return (
-            <Rangeslider
-                value={this.props.delay}
-                orientation="horizontal"
-                onChange={this.handleChange}
-                min = {25}
-                max = {1000}
-            />
+            <div>
+                <Rangeslider
+                    value={this.props.delay}
+                    orientation="horizontal"
+                    onChange={this.handleChange}
+                    min = {25}
+                    max = {1000}
+                />
+            </div>
         );
     }
 }

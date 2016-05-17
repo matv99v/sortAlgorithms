@@ -20173,19 +20173,19 @@
 	
 	var _Bar2 = _interopRequireDefault(_Bar);
 	
-	var _Slider = __webpack_require__(195);
+	var _Slider = __webpack_require__(174);
 	
 	var _Slider2 = _interopRequireDefault(_Slider);
 	
-	var _asyncIterator = __webpack_require__(174);
+	var _asyncIterator = __webpack_require__(179);
 	
 	var _asyncIterator2 = _interopRequireDefault(_asyncIterator);
 	
-	var _swapArrMembers = __webpack_require__(175);
+	var _swapArrMembers = __webpack_require__(180);
 	
 	var _swapArrMembers2 = _interopRequireDefault(_swapArrMembers);
 	
-	var _delayFuncPromise = __webpack_require__(176);
+	var _delayFuncPromise = __webpack_require__(181);
 	
 	var _delayFuncPromise2 = _interopRequireDefault(_delayFuncPromise);
 	
@@ -20714,100 +20714,77 @@
 
 /***/ },
 /* 174 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
+	'use strict';
 	
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
-	exports.default = asyncLoop;
-	function asyncLoop(iterations, iterationBody, callback) {
-	    var index = 0;
-	    var done = false;
 	
-	    var loop = {
-	        next: function next() {
-	            if (done) {
-	                return;
-	            }
-	            if (index < iterations) {
-	                index++;
-	                iterationBody(loop);
-	            } else {
-	                done = true;
-	                callback(); // eslint-disable-line
-	            }
-	        },
-	        getIteration: function getIteration() {
-	            return index - 1;
-	        },
-	        break: function _break() {
-	            done = true;
-	            callback();
-	        },
-	        reset: function reset() {
-	            index = 0;
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _reactRangeslider = __webpack_require__(175);
+	
+	var _reactRangeslider2 = _interopRequireDefault(_reactRangeslider);
+	
+	__webpack_require__(177);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var Slider = function (_React$Component) {
+	    _inherits(Slider, _React$Component);
+	
+	    function Slider() {
+	        var _Object$getPrototypeO;
+	
+	        var _temp, _this, _ret;
+	
+	        _classCallCheck(this, Slider);
+	
+	        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+	            args[_key] = arguments[_key];
 	        }
-	    };
 	
-	    loop.next();
-	    return loop;
-	}
+	        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_Object$getPrototypeO = Object.getPrototypeOf(Slider)).call.apply(_Object$getPrototypeO, [this].concat(args))), _this), _this.state = { value: 10 }, _this.handleChange = function (newDelay) {
+	            _this.props.onRangeChange(newDelay);
+	        }, _temp), _possibleConstructorReturn(_this, _ret);
+	    }
+	
+	    _createClass(Slider, [{
+	        key: 'render',
+	        value: function render() {
+	            return _react2.default.createElement(
+	                'div',
+	                null,
+	                _react2.default.createElement(_reactRangeslider2.default, {
+	                    value: this.props.delay,
+	                    orientation: 'horizontal',
+	                    onChange: this.handleChange,
+	                    min: 25,
+	                    max: 1000
+	                })
+	            );
+	        }
+	    }]);
+	
+	    return Slider;
+	}(_react2.default.Component);
+	
+	exports.default = Slider;
 
 /***/ },
 /* 175 */
-/***/ function(module, exports) {
-
-	"use strict";
-	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	
-	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
-	
-	exports.default = function (array, _ref) {
-	    var _ref2 = _slicedToArray(_ref, 2);
-	
-	    var p = _ref2[0];
-	    var c = _ref2[1];
-	
-	    var buffer = array[p];
-	    array[p] = array[c];
-	    array[c] = buffer;
-	
-	    return array;
-	};
-
-/***/ },
-/* 176 */
-/***/ function(module, exports) {
-
-	"use strict";
-	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	
-	exports.default = function (ms, func) {
-	    return new Promise(function (resolve) {
-	        setTimeout(function () {
-	            func();
-	            resolve();
-	        }, ms);
-	    });
-	};
-
-/***/ },
-/* 177 */,
-/* 178 */,
-/* 179 */,
-/* 180 */,
-/* 181 */,
-/* 182 */,
-/* 183 */,
-/* 184 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -20834,7 +20811,7 @@
 	
 	var _reactDom = __webpack_require__(33);
 	
-	var _classnames = __webpack_require__(185);
+	var _classnames = __webpack_require__(176);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
@@ -21084,7 +21061,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 185 */
+/* 176 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -21138,89 +21115,13 @@
 
 
 /***/ },
-/* 186 */,
-/* 187 */,
-/* 188 */,
-/* 189 */,
-/* 190 */,
-/* 191 */,
-/* 192 */,
-/* 193 */,
-/* 194 */,
-/* 195 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	var _react = __webpack_require__(1);
-	
-	var _react2 = _interopRequireDefault(_react);
-	
-	var _reactRangeslider = __webpack_require__(184);
-	
-	var _reactRangeslider2 = _interopRequireDefault(_reactRangeslider);
-	
-	__webpack_require__(196);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-	
-	var Slider = function (_React$Component) {
-	    _inherits(Slider, _React$Component);
-	
-	    function Slider() {
-	        var _Object$getPrototypeO;
-	
-	        var _temp, _this, _ret;
-	
-	        _classCallCheck(this, Slider);
-	
-	        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-	            args[_key] = arguments[_key];
-	        }
-	
-	        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_Object$getPrototypeO = Object.getPrototypeOf(Slider)).call.apply(_Object$getPrototypeO, [this].concat(args))), _this), _this.state = { value: 10 }, _this.handleChange = function (newDelay) {
-	            _this.props.onRangeChange(newDelay);
-	        }, _temp), _possibleConstructorReturn(_this, _ret);
-	    }
-	
-	    _createClass(Slider, [{
-	        key: 'render',
-	        value: function render() {
-	            return _react2.default.createElement(_reactRangeslider2.default, {
-	                value: this.props.delay,
-	                orientation: 'horizontal',
-	                onChange: this.handleChange,
-	                min: 25,
-	                max: 1000
-	            });
-	        }
-	    }]);
-	
-	    return Slider;
-	}(_react2.default.Component);
-	
-	exports.default = Slider;
-
-/***/ },
-/* 196 */
+/* 177 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(197);
+	var content = __webpack_require__(178);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(173)(content, {});
@@ -21240,7 +21141,7 @@
 	}
 
 /***/ },
-/* 197 */
+/* 178 */
 /***/ function(module, exports, __webpack_require__) {
 
 	exports = module.exports = __webpack_require__(172)();
@@ -21252,6 +21153,93 @@
 	
 	// exports
 
+
+/***/ },
+/* 179 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.default = asyncLoop;
+	function asyncLoop(iterations, iterationBody, callback) {
+	    var index = 0;
+	    var done = false;
+	
+	    var loop = {
+	        next: function next() {
+	            if (done) {
+	                return;
+	            }
+	            if (index < iterations) {
+	                index++;
+	                iterationBody(loop);
+	            } else {
+	                done = true;
+	                callback(); // eslint-disable-line
+	            }
+	        },
+	        getIteration: function getIteration() {
+	            return index - 1;
+	        },
+	        break: function _break() {
+	            done = true;
+	            callback();
+	        },
+	        reset: function reset() {
+	            index = 0;
+	        }
+	    };
+	
+	    loop.next();
+	    return loop;
+	}
+
+/***/ },
+/* 180 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+	
+	exports.default = function (array, _ref) {
+	    var _ref2 = _slicedToArray(_ref, 2);
+	
+	    var p = _ref2[0];
+	    var c = _ref2[1];
+	
+	    var buffer = array[p];
+	    array[p] = array[c];
+	    array[c] = buffer;
+	
+	    return array;
+	};
+
+/***/ },
+/* 181 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	exports.default = function (ms, func) {
+	    return new Promise(function (resolve) {
+	        setTimeout(function () {
+	            func();
+	            resolve();
+	        }, ms);
+	    });
+	};
 
 /***/ }
 /******/ ]);
