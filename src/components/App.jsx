@@ -86,7 +86,7 @@ export default class App extends React.Component {
                         delay         = {this.state.delay}
                 />
 
-                <p>Delay: {this.state.delay} ms</p>
+                <p>Stupid sort, delay: {this.state.delay} ms</p>
 
                 {
                     this.state.array.map( (el, i) => {

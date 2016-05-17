@@ -20287,7 +20287,7 @@
 	                _react2.default.createElement(
 	                    'p',
 	                    null,
-	                    'Delay: ',
+	                    'Stupid sort, delay: ',
 	                    this.state.delay,
 	                    ' ms'
 	                ),
