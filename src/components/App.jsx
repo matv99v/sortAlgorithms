@@ -1,129 +1,105 @@
-import React from 'react';
-import Bar from './Bar.jsx';
+import React  from 'react';
+import Bar    from './Bar.jsx';
+import Slider from './Slider.jsx';
+
+import asyncIterator    from '../utils/asyncIterator';
+import swapArrMembers   from '../utils/swapArrMembers';
+import delayFuncPromise from '../utils/delayFuncPromise';
+
 
 export default class App extends React.Component {
     state = {
-        delay: 25,
-        numOfElements: 50,
+        delay: 250,
+        numOfElements: 25,
         array: [],
         checkInd: [],
         status: null
     };
 
-    delayPromise = func => {
-        return new Promise(resolve => {
-            setTimeout( () => {
-                func();
-                resolve();
-            }, this.state.delay);
-        });
-    };
-
-    componentWillMount = () => { // fill up array with random values
+    // fill up array with random values in range [1; 100]
+    componentWillMount = () => {
         let i = this.state.numOfElements;
         const array = [];
 
         while (i) {
             --i;
-            const rndNum = Math.floor(Math.random() * 100);
+            const rndNum = Math.floor(Math.random() * 100) + 1;
             array.push(rndNum);
         }
+
         this.setState({ array });
     };
 
     componentDidMount = () => {
-        this.asyncLoop(
-            this.state.numOfElements,
-            this.processIteration,
+
+        asyncIterator(
+            // number of iteration steps
+            this.state.numOfElements - 1,
+
+            // itreration body
+            loop => {
+                const iCurr    = loop.getIteration();
+                const iNext    = iCurr + 1;
+                const {array} = this.state;
+
+                delayFuncPromise(this.state.delay,
+                    () => {
+                        this.setState({
+                            checkInd: [iCurr, iNext],
+                            status  : array[iCurr] > array[iNext] ? 'swap' : 'iterate'
+                        });
+                    }
+                ).then(() => {
+                    if (this.state.status === 'swap') {
+                        return delayFuncPromise(this.state.delay,
+                            () => {
+                                this.setState({ array: swapArrMembers(this.state.array, this.state.checkInd) });
+                                loop.reset();
+                            }
+                        );
+                    }
+                }).then(loop.next);
+            },
+
+            // iteration is  over
             () => {
-                this.setState({status: 'finished', checkInd: [] });
+                delayFuncPromise(this.state.delay,
+                    () => {
+                        this.setState({
+                            checkInd: [],
+                            status  : 'sorted'
+                        });
+                    }
+                );
             }
         );
     };
 
-    processIteration = loop => {
-        const iterationInd = loop.getIteration();
-        const compareInd   = iterationInd - 1;
-        this.setState({checkInd: [compareInd, iterationInd]});
-
-        const swapping = () => {
-            const array = this.swap(compareInd, iterationInd);
-            this.setState({array});
-        };
-
-        if (this.state.array[compareInd] > this.state.array[iterationInd]) { // compare elements
-            this.setState({status: 'swap'});
-            this.delayPromise(swapping).then(loop.reset).then(loop.next);
-        } else {
-            this.setState({status: 'iterate'});
-            this.delayPromise(loop.next);
-        }
-    }
-
-    asyncLoop = (iterations, mainWorkFunc, callback) => {
-        let index = 1;
-        let done  = false;
-
-        const loop = {
-            next() {
-                if (done) {
-                    return;
-                }
-                if (index < iterations) {
-                    index++;
-                    mainWorkFunc(loop);
-                } else {
-                    done = true;
-                    callback(); // eslint-disable-line
-                }
-            },
-            getIteration() {
-                return index - 1;
-            },
-            break() {
-                done = true;
-                callback();
-            },
-            reset() {
-                index = 1;
-            }
-        };
-
-        loop.next();
-        return loop;
-    };
-
-    swap = (p, c) => {
-        const array = [...this.state.array];
-        const buffer = array[p];
-        array[p] = array[c];
-        array[c] = buffer;
-        return array;
-    };
-
-    getColor = (i) => {
-        if (this.state.checkInd.indexOf(i) > -1) {
-
-            switch (this.state.status) {
-                case 'iterate':
-                    return 'yellow';
-                case 'swap':
-                    return 'red';
-                default:
-                    return;
-            }
-
-        }
+    handleRangeChange = delay => {
+        this.setState({delay});
     };
 
     render() {
         return (
             <div>
+                <Slider onRangeChange = {this.handleRangeChange}
+                        delay         = {this.state.delay}
+                />
+
+                <p>Delay: {this.state.delay} ms</p>
+
                 {
                     this.state.array.map( (el, i) => {
                         return <Bar amount = {el}
-                                    color  = {this.getColor(i)}
                                     key    = {i}
+                                    color  = {(() => {
+                                        if (this.state.status === 'iterate' && this.state.checkInd.indexOf(i) !== -1) {
+                                            return 'yellow';
+                                        }
+                                        if (this.state.status === 'swap'    && this.state.checkInd.indexOf(i) !== -1) {
+                                            return 'red';
+                                        }
+                                    })()}
                         />;
                     })
                 }
