@@ -8,7 +8,7 @@ import swapArrMembers   from '../utils/swapArrMembers';
 import delayFuncPromise from '../utils/delayFuncPromise';
 
 
-export default class App extends React.Component {
+export default class StupidSort extends React.Component {
     state = {
         delay        : 2000,
         numOfElements: 25,

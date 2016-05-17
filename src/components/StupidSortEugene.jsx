@@ -3,7 +3,7 @@ import Bar    from './Bar.jsx';
 import Slider from './Slider.jsx';
 import Button from 'react-bootstrap/lib/Button';
 
-export default class App extends React.Component {
+export default class StupidSortEugene extends React.Component {
     state = {
         delay        : 2000,
         numOfElements: 25,
@@ -32,6 +32,7 @@ export default class App extends React.Component {
             let _id, temp, flag = false, i = 0, length = a.length - 1;
             const step = () => {
                 if (length > 1) {
+                    this.setState({checkInd: [i - 1, i], status: 'iterate'});
                     if (i === length) {
                         length--;
                         i = 1;
@@ -40,7 +41,9 @@ export default class App extends React.Component {
                         i++;
                     }
 
+
                     if (a[i - 1] > a[i]) {
+                        // this.setState({status: 'swap'});
                         temp = a[i];
                         a[i] = a[i - 1];
                         a[i - 1] = temp;
@@ -50,6 +53,7 @@ export default class App extends React.Component {
                         this.setState({array: a});
                         setTimeout(step, this.state.delay);
                     } else {
+                        this.setState({status: 'iterate'});
                         step();
                     }
                 }
