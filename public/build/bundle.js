@@ -20177,9 +20177,9 @@
 	
 	var _StupidSort2 = _interopRequireDefault(_StupidSort);
 	
-	var _StupidSortEugene = __webpack_require__(222);
+	var _BubbleSort = __webpack_require__(223);
 	
-	var _StupidSortEugene2 = _interopRequireDefault(_StupidSortEugene);
+	var _BubbleSort2 = _interopRequireDefault(_BubbleSort);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -20205,7 +20205,7 @@
 	                'div',
 	                null,
 	                _react2.default.createElement(_StupidSort2.default, null),
-	                _react2.default.createElement(_StupidSortEugene2.default, null)
+	                _react2.default.createElement(_BubbleSort2.default, null)
 	            );
 	        }
 	    }]);
@@ -22428,7 +22428,8 @@
 	};
 
 /***/ },
-/* 222 */
+/* 222 */,
+/* 223 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -22463,21 +22464,21 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var StupidSortEugene = function (_React$Component) {
-	    _inherits(StupidSortEugene, _React$Component);
+	var BubbleSort = function (_React$Component) {
+	    _inherits(BubbleSort, _React$Component);
 	
-	    function StupidSortEugene() {
+	    function BubbleSort() {
 	        var _Object$getPrototypeO;
 	
 	        var _temp, _this, _ret;
 	
-	        _classCallCheck(this, StupidSortEugene);
+	        _classCallCheck(this, BubbleSort);
 	
 	        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
 	            args[_key] = arguments[_key];
 	        }
 	
-	        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_Object$getPrototypeO = Object.getPrototypeOf(StupidSortEugene)).call.apply(_Object$getPrototypeO, [this].concat(args))), _this), _this.state = {
+	        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_Object$getPrototypeO = Object.getPrototypeOf(BubbleSort)).call.apply(_Object$getPrototypeO, [this].concat(args))), _this), _this.state = {
 	            delay: 2000,
 	            numOfElements: 25,
 	            array: [],
@@ -22542,7 +22543,7 @@
 	    // fill up array with random values in range [1; 100]
 	
 	
-	    _createClass(StupidSortEugene, [{
+	    _createClass(BubbleSort, [{
 	        key: 'render',
 	        value: function render() {
 	            var _this2 = this;
@@ -22587,10 +22588,10 @@
 	        }
 	    }]);
 	
-	    return StupidSortEugene;
+	    return BubbleSort;
 	}(_react2.default.Component);
 	
-	exports.default = StupidSortEugene;
+	exports.default = BubbleSort;
 
 /***/ }
 /******/ ]);

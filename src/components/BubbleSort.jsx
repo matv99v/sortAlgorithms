@@ -3,7 +3,7 @@ import Bar    from './Bar.jsx';
 import Slider from './Slider.jsx';
 import Button from 'react-bootstrap/lib/Button';
 
-export default class StupidSortEugene extends React.Component {
+export default class BubbleSort extends React.Component {
     state = {
         delay        : 2000,
         numOfElements: 25,
