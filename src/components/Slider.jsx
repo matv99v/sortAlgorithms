@@ -4,8 +4,6 @@ import Rangeslider from 'react-rangeslider';
 import './Slider.less';
 
 export default class Slider extends React.Component {
-    state = {value: 10};
-
     handleChange = (newDelay) => {
         this.props.onRangeChange(newDelay);
     }
@@ -17,7 +15,7 @@ export default class Slider extends React.Component {
                     value={this.props.delay}
                     orientation="horizontal"
                     onChange={this.handleChange}
-                    min = {25}
+                    min = {5}
                     max = {1000}
                 />
             </div>

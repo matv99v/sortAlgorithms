@@ -20213,7 +20213,7 @@
 	
 	        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_Object$getPrototypeO = Object.getPrototypeOf(App)).call.apply(_Object$getPrototypeO, [this].concat(args))), _this), _this.state = {
 	            delay: 250,
-	            numOfElements: 25,
+	            numOfElements: 30,
 	            array: [],
 	            checkInd: [],
 	            status: null
@@ -20258,6 +20258,7 @@
 	
 	            // iteration is  over
 	            function () {
+	
 	                (0, _delayFuncPromise2.default)(_this.state.delay, function () {
 	                    _this.setState({
 	                        checkInd: [],
@@ -20281,16 +20282,16 @@
 	            return _react2.default.createElement(
 	                'div',
 	                null,
-	                _react2.default.createElement(_Slider2.default, { onRangeChange: this.handleRangeChange,
-	                    delay: this.state.delay
-	                }),
 	                _react2.default.createElement(
-	                    'p',
-	                    null,
+	                    'h3',
+	                    { style: { textAlign: 'center' } },
 	                    'Stupid sort, delay: ',
 	                    this.state.delay,
 	                    ' ms'
 	                ),
+	                _react2.default.createElement(_Slider2.default, { onRangeChange: this.handleRangeChange,
+	                    delay: this.state.delay
+	                }),
 	                this.state.array.map(function (el, i) {
 	                    return _react2.default.createElement(_Bar2.default, { amount: el,
 	                        key: i,
@@ -20300,6 +20301,9 @@
 	                            }
 	                            if (_this2.state.status === 'swap' && _this2.state.checkInd.indexOf(i) !== -1) {
 	                                return 'red';
+	                            }
+	                            if (_this2.state.status === 'sorted') {
+	                                return 'aqua';
 	                            }
 	                        }()
 	                    });
@@ -20756,7 +20760,7 @@
 	            args[_key] = arguments[_key];
 	        }
 	
-	        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_Object$getPrototypeO = Object.getPrototypeOf(Slider)).call.apply(_Object$getPrototypeO, [this].concat(args))), _this), _this.state = { value: 10 }, _this.handleChange = function (newDelay) {
+	        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_Object$getPrototypeO = Object.getPrototypeOf(Slider)).call.apply(_Object$getPrototypeO, [this].concat(args))), _this), _this.handleChange = function (newDelay) {
 	            _this.props.onRangeChange(newDelay);
 	        }, _temp), _possibleConstructorReturn(_this, _ret);
 	    }
@@ -20771,7 +20775,7 @@
 	                    value: this.props.delay,
 	                    orientation: 'horizontal',
 	                    onChange: this.handleChange,
-	                    min: 25,
+	                    min: 5,
 	                    max: 1000
 	                })
 	            );

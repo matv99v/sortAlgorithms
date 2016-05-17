@@ -9,11 +9,11 @@ import delayFuncPromise from '../utils/delayFuncPromise';
 
 export default class App extends React.Component {
     state = {
-        delay: 250,
-        numOfElements: 25,
-        array: [],
-        checkInd: [],
-        status: null
+        delay        : 250,
+        numOfElements: 30,
+        array        : [],
+        checkInd     : [],
+        status       : null
     };
 
     // fill up array with random values in range [1; 100]
@@ -40,7 +40,7 @@ export default class App extends React.Component {
             loop => {
                 const iCurr    = loop.getIteration();
                 const iNext    = iCurr + 1;
-                const {array} = this.state;
+                const {array}  = this.state;
 
                 delayFuncPromise(this.state.delay,
                     () => {
@@ -63,6 +63,7 @@ export default class App extends React.Component {
 
             // iteration is  over
             () => {
+
                 delayFuncPromise(this.state.delay,
                     () => {
                         this.setState({
@@ -82,11 +83,11 @@ export default class App extends React.Component {
     render() {
         return (
             <div>
+                <h3 style={{textAlign: 'center'}}>Stupid sort, delay: {this.state.delay} ms</h3>
+
                 <Slider onRangeChange = {this.handleRangeChange}
                         delay         = {this.state.delay}
                 />
-
-                <p>Stupid sort, delay: {this.state.delay} ms</p>
 
                 {
                     this.state.array.map( (el, i) => {
@@ -98,6 +99,9 @@ export default class App extends React.Component {
                                         }
                                         if (this.state.status === 'swap'    && this.state.checkInd.indexOf(i) !== -1) {
                                             return 'red';
+                                        }
+                                        if (this.state.status === 'sorted') {
+                                            return 'aqua';
                                         }
                                     })()}
                         />;
