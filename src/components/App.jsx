@@ -9,7 +9,7 @@ import delayFuncPromise from '../utils/delayFuncPromise';
 
 export default class App extends React.Component {
     state = {
-        delay        : 250,
+        delay        : 2000,
         numOfElements: 25,
         array        : [],
         checkInd     : [],

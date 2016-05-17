@@ -20212,7 +20212,7 @@
 	        }
 	
 	        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_Object$getPrototypeO = Object.getPrototypeOf(App)).call.apply(_Object$getPrototypeO, [this].concat(args))), _this), _this.state = {
-	            delay: 250,
+	            delay: 2000,
 	            numOfElements: 25,
 	            array: [],
 	            checkInd: [],
