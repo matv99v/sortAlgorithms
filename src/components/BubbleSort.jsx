@@ -1,7 +1,10 @@
 import React  from 'react';
-import Bar    from './Bar.jsx';
-import Slider from './Slider.jsx';
+import Bar    from './SortInstance/Bar.jsx';
+import Slider from './SortInstance/Slider.jsx';
+
 import Button from 'react-bootstrap/lib/Button';
+import Col    from 'react-bootstrap/lib/Col';
+import Row    from 'react-bootstrap/lib/Row';
 
 export default class BubbleSort extends React.Component {
     state = {
@@ -72,16 +75,28 @@ export default class BubbleSort extends React.Component {
     render() {
         return (
             <div>
-                <h3>Bubble sort, delay: {this.state.delay} ms</h3>
+                <Row style={{display: 'flex', alignItems: 'center'}}>
+                    <Col xs={8}>
+                        <h5>Stupid sort, delay: {this.state.delay} ms</h5>
+                    </Col>
 
-                <Slider onRangeChange = {this.handleRangeChange}
-                       delay          = {this.state.delay}
-                />
+                    <Col xs={4}>
+                        <Button bsSize='xsmall'
+                                onClick={this.handleStart}
+                                disabled={!!this.state.status}
+                                block
+                                >
+                        Start
+                        </Button>
+                    </Col>
+                </Row>
 
-                <Button bsStyle="success"
-                        onClick={this.handleStart}
-                        disabled={!!this.state.status}>Start</Button>
+                <Row style={{padding: '0 15px'}}>
+                    <Slider onRangeChange = {this.handleRangeChange}
+                            delay          = {this.state.delay}
 
+                    />
+                </Row>
                 {
                     this.state.array.map( (el, i) => {
                         return <Bar amount = {el}

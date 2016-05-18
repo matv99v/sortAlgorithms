@@ -1,20 +1,21 @@
 import React  from 'react';
-import Bar    from './Bar.jsx';
-import Slider from './Slider.jsx';
-import Button from 'react-bootstrap/lib/Button';
+import Bar    from './SortInstance/Bar.jsx';
+import SortHeader from './SortInstance/SortHeader.jsx';
+import SortFooter from './SortInstance/SortFooter.jsx';
 
 import asyncIterator    from '../utils/asyncIterator';
 import swapArrMembers   from '../utils/swapArrMembers';
 import delayFuncPromise from '../utils/delayFuncPromise';
 
-
 export default class StupidSort extends React.Component {
     state = {
-        delay        : 2000,
+        delay        : 250,
         numOfElements: 25,
         array        : [],
         checkInd     : [],
-        status       : null
+        status       : null,
+        swaps        : 0,
+        compares     : 0
     };
 
     // fill up array with random values in range [1; 100]
@@ -31,7 +32,7 @@ export default class StupidSort extends React.Component {
         this.setState({ array });
     };
 
-    handleStart = () => {
+    handleStartClick = () => {
 
         asyncIterator(
             // number of iteration steps
@@ -39,31 +40,32 @@ export default class StupidSort extends React.Component {
 
             // itreration body
             loop => {
-                console.log('----====iteration====----');
                 const iCurr        = loop.getIteration();
                 const iNext        = iCurr + 1;
                 const {array}      = this.state;
                 const boundPromise = delayFuncPromise.bind(null, this.state.delay);
 
 
-                boundPromise( () => {
-                    console.log(`compare array ind ${iCurr} and ${iNext}`);
+                boundPromise( () => { // compare two elements
                     this.setState({
                         checkInd: [iCurr, iNext],
-                        status  : array[iCurr] > array[iNext] ? 'swap' : 'iterate'
+                        status  : array[iCurr] > array[iNext] ? 'swap' : 'iterate',
+                        compares: this.state.compares + 1
                     });
                 })
-                .then( () => {
-                    console.log(`what should be done: ${this.state.status}`);
+                .then( () => { // action based upon comparison
                     if (this.state.status === 'swap') {
                         return boundPromise( () => {
-                            console.log('!!!swapping elements, i = 0!!!');
-                            this.setState({ array: swapArrMembers(this.state.array, this.state.checkInd) });
+                            this.setState({
+                                array: swapArrMembers(this.state.array, this.state.checkInd),
+                                swaps: this.state.swaps + 1,
+                                status: 'swapping'
+                            });
                             loop.reset();
                         });
                     }
                 })
-                .then(loop.next);
+                .then(loop.next); // next iteration
             },
 
             // iteration is  over
@@ -73,7 +75,6 @@ export default class StupidSort extends React.Component {
                         checkInd: [],
                         status  : 'sorted'
                     });
-                    console.log('sorted!');
                 });
             }
         );
@@ -85,36 +86,42 @@ export default class StupidSort extends React.Component {
 
     render() {
         return (
-            <div>
-                <h3>Stupid sort, delay: {this.state.delay} ms</h3>
-
-                <Slider onRangeChange = {this.handleRangeChange}
-                       delay          = {this.state.delay}
+            <section style={{border: '1px solid #ccc', borderRadius: '10px'}}>
+                <SortHeader sortName      = 'Stupid sort'
+                            onChangeRange = {this.handleRangeChange}
+                            onStartClick  = {this.handleStartClick}
+                            delay         = {this.state.delay}
+                            status        = {this.state.status}
                 />
-
-                <Button bsStyle="success"
-                        onClick={this.handleStart}
-                        disabled={!!this.state.status}>Start</Button>
 
                 {
                     this.state.array.map( (el, i) => {
                         return <Bar amount = {el}
                                     key    = {i}
                                     color  = {(() => {
-                                        if (this.state.status === 'iterate' && this.state.checkInd.indexOf(i) !== -1) {
-                                            return 'yellow';
+                                        if (this.state.status === 'iterate'  && this.state.checkInd.indexOf(i) !== -1) {
+                                            return '#f0ad4e';
                                         }
-                                        if (this.state.status === 'swap'    && this.state.checkInd.indexOf(i) !== -1) {
-                                            return 'red';
+                                        if (this.state.status === 'swap'     && this.state.checkInd.indexOf(i) !== -1) {
+                                            return '#c9302c';
+                                        }
+                                        if (this.state.status === 'swapping' && this.state.checkInd.indexOf(i) !== -1) {
+                                            return '#53EA53';
                                         }
                                         if (this.state.status === 'sorted') {
-                                            return 'aqua';
+                                            return '#286090';
                                         }
                                     })()}
                         />;
                     })
                 }
-            </div>
+
+                <SortFooter delay         = {this.state.delay}
+                            compares      = {this.state.compares}
+                            swaps         = {this.state.swaps}
+                />
+
+            </section>
         );
     }
 }

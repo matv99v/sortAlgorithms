@@ -10,6 +10,13 @@ module.exports = {
         publicPath: path.resolve('./public')
     },
 
+    plugins: [
+        new webpack.optimize.UglifyJsPlugin({
+            minimize: true,
+            comments: false
+        })
+    ],
+
     module: {
         loaders: [
             {
