@@ -1,65 +1,76 @@
-import React  from 'react';
-import Bar    from './SortInstance/Bar.jsx';
-import SortHeader from './SortInstance/SortHeader.jsx';
+import React      from 'react';
+import Bar        from './SortInstance/Bar.jsx';
 import SortFooter from './SortInstance/SortFooter.jsx';
+import Col        from 'react-bootstrap/lib/Col';
+import Row        from 'react-bootstrap/lib/Row';
+import Grid       from 'react-bootstrap/lib/Grid';
+
 
 import asyncIterator    from '../utils/asyncIterator';
 import swapArrMembers   from '../utils/swapArrMembers';
 import delayFuncPromise from '../utils/delayFuncPromise';
+import getRandomArray   from '../utils/getRandomArray';
 
 export default class StupidSort extends React.Component {
     state = {
-        delay        : 250,
-        numOfElements: 25,
-        array        : [],
-        checkInd     : [],
-        status       : null,
-        swaps        : 0,
-        compares     : 0
+        delay           : 500,  // delay of iteration in ms
+        array           : [],   // actual array to be sorted
+        checkInd        : [],   // indexes that are currentrly checked
+        status          : null, // [orderedPair, unorderedPair, swap, sorted]
+        swaps           : 0,    // statistics
+        compares        : 0     // statistics
     };
 
     // fill up array with random values in range [1; 100]
     componentWillMount = () => {
-        let i = this.state.numOfElements;
-        const array = [];
+        this.setState({ array: getRandomArray(this.props.numOfElements) });
+    };
 
-        while (i) {
-            --i;
-            const rndNum = Math.floor(Math.random() * 100) + 1;
-            array.push(rndNum);
+    componentWillReceiveProps = (nextProps) => {
+        if (!this.props.isActive && nextProps.isActive) {
+            this.setState({
+                swaps    : 0,
+                compares : 0
+            });
+            this.handleStartClick();
         }
-
-        this.setState({ array });
+        if (this.props.numOfElements !== nextProps.numOfElements) {
+            this.setState({
+                status   : null,
+                array    : getRandomArray(nextProps.numOfElements),
+                swaps    : 0,
+                compares : 0
+            });
+        }
     };
 
     handleStartClick = () => {
-
         asyncIterator(
             // number of iteration steps
-            this.state.numOfElements - 1,
+            this.props.numOfElements - 1,
 
             // itreration body
             loop => {
                 const iCurr        = loop.getIteration();
                 const iNext        = iCurr + 1;
                 const {array}      = this.state;
-                const boundPromise = delayFuncPromise.bind(null, this.state.delay);
+                const boundPromise = delayFuncPromise.bind(null, this.props.delay);
 
 
                 boundPromise( () => { // compare two elements
                     this.setState({
-                        checkInd: [iCurr, iNext],
-                        status  : array[iCurr] > array[iNext] ? 'swap' : 'iterate',
-                        compares: this.state.compares + 1
+                        checkInd : [iCurr, iNext],
+                        status   : array[iCurr] > array[iNext] ? 'unorderedPair' : 'orderedPair',
+                        compares : this.state.compares + 1
                     });
                 })
                 .then( () => { // action based upon comparison
-                    if (this.state.status === 'swap') {
+                    if (this.state.status === 'unorderedPair') {
                         return boundPromise( () => {
                             this.setState({
-                                array: swapArrMembers(this.state.array, this.state.checkInd),
-                                swaps: this.state.swaps + 1,
-                                status: 'swapping'
+                                array : swapArrMembers(this.state.array, this.state.checkInd),
+                                swaps : this.state.swaps + 1,
+                                status: 'swap'
                             });
                             loop.reset();
                         });
@@ -70,10 +81,11 @@ export default class StupidSort extends React.Component {
 
             // iteration is  over
             () => {
-                delayFuncPromise(this.state.delay, () => {
+                delayFuncPromise(this.props.delay, () => {
+                    this.props.ifSorted();
                     this.setState({
-                        checkInd: [],
-                        status  : 'sorted'
+                        checkInd : [],
+                        status   : 'sorted'
                     });
                 });
             }
@@ -84,44 +96,37 @@ export default class StupidSort extends React.Component {
         this.setState({delay});
     };
 
+    resolveBarColor = (i) => {
+        if (this.state.checkInd.indexOf(i) !== -1) { // if i is present in this.state.checkInd
+            switch (this.state.status) {
+                case 'orderedPair'  : return '#f0ad4e';
+                case 'unorderedPair': return '#c9302c';
+                case 'swap'         : return '#53EA53';
+                default             : return;
+            }
+        }
+    };
+
     render() {
         return (
-            <section style={{border: '1px solid #ccc', borderRadius: '10px'}}>
-                <SortHeader sortName      = 'Stupid sort'
-                            onChangeRange = {this.handleRangeChange}
-                            onStartClick  = {this.handleStartClick}
-                            delay         = {this.state.delay}
-                            status        = {this.state.status}
-                />
+            <div style={{border: '1px solid #ccc'}}>
+                        <div style={{textAlign: 'center'}}>Stupid sort</div>
+                        {
+                            this.state.array.map( (el, i) => <Bar amount    = {el}
+                                                                  key       = {i}
+                                                                  color     = {this.resolveBarColor(i)}
+                                                                  className = {this.state.status === 'sorted'
+                                                                      ? 'Bar__bar_sorted'
+                                                                      : 'Bar__bar_unsorted'
+                                                                  } />
+                            )
+                        }
 
-                {
-                    this.state.array.map( (el, i) => {
-                        return <Bar amount = {el}
-                                    key    = {i}
-                                    color  = {(() => {
-                                        if (this.state.status === 'iterate'  && this.state.checkInd.indexOf(i) !== -1) {
-                                            return '#f0ad4e';
-                                        }
-                                        if (this.state.status === 'swap'     && this.state.checkInd.indexOf(i) !== -1) {
-                                            return '#c9302c';
-                                        }
-                                        if (this.state.status === 'swapping' && this.state.checkInd.indexOf(i) !== -1) {
-                                            return '#53EA53';
-                                        }
-                                        if (this.state.status === 'sorted') {
-                                            return '#286090';
-                                        }
-                                    })()}
-                        />;
-                    })
-                }
-
-                <SortFooter delay         = {this.state.delay}
-                            compares      = {this.state.compares}
-                            swaps         = {this.state.swaps}
-                />
-
-            </section>
+                        <SortFooter delay    = {this.props.delay}
+                                    compares = {this.state.compares}
+                                    swaps    = {this.state.swaps}
+                        />
+            </div>
         );
     }
 }

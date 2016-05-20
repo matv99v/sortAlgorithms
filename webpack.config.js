@@ -11,10 +11,10 @@ module.exports = {
     },
 
     plugins: [
-        new webpack.optimize.UglifyJsPlugin({
-            minimize: true,
-            comments: false
-        })
+        // new webpack.optimize.UglifyJsPlugin({
+        //     minimize: true,
+        //     comments: false
+        // })
     ],
 
     module: {

@@ -1,4 +1,8 @@
 import React from 'react';
+import Row    from 'react-bootstrap/lib/Row';
+import Col    from 'react-bootstrap/lib/Col';
+import './Slider.less';
+
 
 export default class Slider extends React.Component {
     handleChange = (e) => {
@@ -7,16 +11,15 @@ export default class Slider extends React.Component {
 
     render() {
         return (
-            <div>
                 <input type     = 'range'
-                       name     = 'points'
-                       min      = '1'
-                       max      = '1000'
+                       min      = {this.props.min}
+                       max      = {this.props.max}
                        step     = '1'
-                       value    = {this.props.delay}
+                       value    = {this.props.value}
                        onChange = {this.handleChange}
+                       disabled = {this.props.disabled}
+                       className ='Slider__slider_hoverState'
                 />
-            </div>
         );
     }
 }
