@@ -23,8 +23,8 @@ export default class BubbleSort extends BaseSort {
                     --i,
 
                     // inner itreration body
-                    loop => {
-                        const iCurr        = loop.getIteration();
+                    loopForward => {
+                        const iCurr        = loopForward.getIteration();
                         const iNext        = iCurr + 1;
                         const {array}      = this.state;
                         const boundPromise = delayFuncPromise.bind(null, this.props.delay);
@@ -47,7 +47,7 @@ export default class BubbleSort extends BaseSort {
                                 });
                             }
                         })
-                        .then(loop.next); // next inner iteration
+                        .then(loopForward.next); // next inner iteration
                     },
 
                     loopBack.next // inner iteration is  over

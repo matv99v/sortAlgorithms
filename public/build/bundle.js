@@ -22717,8 +22717,8 @@
 	                --i,
 	
 	                // inner itreration body
-	                function (loop) {
-	                    var iCurr = loop.getIteration();
+	                function (loopForward) {
+	                    var iCurr = loopForward.getIteration();
 	                    var iNext = iCurr + 1;
 	                    var array = _this.state.array;
 	
@@ -22742,7 +22742,7 @@
 	                                });
 	                            });
 	                        }
-	                    }).then(loop.next); // next inner iteration
+	                    }).then(loopForward.next); // next inner iteration
 	                }, loopBack.next // inner iteration is  over
 	                );
 	            },
