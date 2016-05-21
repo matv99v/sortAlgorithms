@@ -12,7 +12,7 @@ export default class StupidSort extends BaseSort {
 
         asyncIteratorForward(
             // number of iteration steps
-            this.props.numOfElements - 1,
+            this.props.elements.length,
 
             // itreration body
             loop => {

@@ -4,15 +4,21 @@ import Col        from 'react-bootstrap/lib/Col';
 import Row        from 'react-bootstrap/lib/Row';
 import Button     from 'react-bootstrap/lib/Button';
 import Slider     from './SortInstance/Slider.jsx';
+import getRandomArray from '../utils/getRandomArray';
+
 import StupidSort from './StupidSort.jsx';
 import BubbleSort from './BubbleSort.jsx';
 
 export default class App extends React.Component {
     state = {
+        elements     : [],
         isSorting    : false,
         delay        : 250,
-        numOfElements: 15,
         done         : 0
+    };
+
+    componentWillMount = () => {
+        this.setState({elements: getRandomArray(15)});
     };
 
     handleDelayRangeChange = delay => {
@@ -20,7 +26,9 @@ export default class App extends React.Component {
     };
 
     handleElementsAmountRangeChange = numOfElements => {
-        this.setState({numOfElements: +numOfElements});
+        this.setState({
+            elements : getRandomArray(numOfElements)
+        });
     };
 
     handleSortClick = () => {
@@ -38,6 +46,7 @@ export default class App extends React.Component {
         return (
             <Grid >
 
+                {/* button */}
                 <Row>
                     <Col xs={12} sm={12} md={12}>
                         <Button bsSize   = 'xsmall'
@@ -49,9 +58,10 @@ export default class App extends React.Component {
                     </Col>
                 </Row>
 
+                {/* delay slider */}
                 <Row >
                     <Col xs={2} sm={2} md={2}>
-                        delay: {this.state.delay}
+                        <h6>delay: {this.state.delay}</h6>
                     </Col>
 
                     <Col xs={10} sm={10} md={10}>
@@ -63,14 +73,15 @@ export default class App extends React.Component {
                     </Col>
                 </Row>
 
+                {/* amount slider */}
                 <Row >
                     <Col xs={2} sm={2} md={2}>
-                        amount: {this.state.numOfElements}
+                        <h6>amount: {this.state.elements.length}</h6>
                     </Col>
 
                     <Col xs={10} sm={10} md={10}>
                         <Slider onRangeChange = {this.handleElementsAmountRangeChange}
-                                value         = {this.state.numOfElements}
+                                value         = {this.state.elements.length}
                                 min           = '2'
                                 max           = '50'
                                 disabled      = {this.state.isSorting} />
@@ -83,6 +94,7 @@ export default class App extends React.Component {
                         <StupidSort isActive      = {this.state.isSorting}
                                     delay         = {this.state.delay}
                                     ifSorted      = {this.notifyIfSorted}
+                                    elements      = {this.state.elements}
                                     numOfElements = {this.state.numOfElements} />
                    </Col>
 
@@ -90,6 +102,7 @@ export default class App extends React.Component {
                         <BubbleSort isActive      = {this.state.isSorting}
                                     delay         = {this.state.delay}
                                     ifSorted      = {this.notifyIfSorted}
+                                    elements      = {this.state.elements}
                                     numOfElements = {this.state.numOfElements} />
                     </Col>
 

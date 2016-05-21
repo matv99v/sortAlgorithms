@@ -2,20 +2,20 @@ import React          from 'react';
 import Bar            from './SortInstance/Bar.jsx';
 import SortFooter     from './SortInstance/SortFooter.jsx';
 
-import getRandomArray from '../utils/getRandomArray';
+// import getRandomArray from '../utils/getRandomArray';
 
 export default class BaseSort extends React.Component {
     state = {
-        array           : [],   // actual array to be sorted
-        checkInd        : [],   // indexes that are currentrly checked
-        status          : null, // [orderedPair, unorderedPair, swap, sorted]
-        swaps           : 0,    // statistics
-        compares        : 0     // statistics
+        array    : [], // actual array to be sorted
+        checkInd : [], // indexes that are currentrly checked
+        status   : null, // [orderedPair, unorderedPair, swap, sorted]
+        swaps    : 0, // statistics
+        compares : 0 // statistics
     };
 
     // fill up array with random values in range [1; 100]
     componentWillMount = () => {
-        this.setState({ array: getRandomArray(this.props.numOfElements) });
+        this.setState({ array: [...this.props.elements] });
     };
 
     componentWillReceiveProps = (nextProps) => {
@@ -26,10 +26,10 @@ export default class BaseSort extends React.Component {
             });
             this.handleStartClick();
         }
-        if (this.props.numOfElements !== nextProps.numOfElements) { // check if numOfElements changed
+        if (this.props.elements.length !== nextProps.elements.length) { // check if new elements changed
             this.setState({
                 status   : null,
-                array    : getRandomArray(nextProps.numOfElements),
+                array    : [...nextProps.elements],
                 swaps    : 0,
                 compares : 0
             });
@@ -38,7 +38,7 @@ export default class BaseSort extends React.Component {
 
     resetState = () => {
         if (this.state.status === 'sorted') this.setState({
-            array : getRandomArray(this.props.numOfElements),
+            array : [...this.props.elements],
             status: null
         });
     };

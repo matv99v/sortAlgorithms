@@ -10,11 +10,11 @@ export default class BubbleSort extends BaseSort {
 
     handleStartClick = () => {
         this.resetState();
-        let i = this.props.numOfElements;
+        let i = this.props.elements.length;
 
         asyncIteratorBack(
             // number of outer iteration steps
-            this.props.numOfElements - 1,
+            this.props.elements.length,
 
             // outer itreration body
             loopBack => {
