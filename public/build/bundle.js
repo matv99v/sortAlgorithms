@@ -20199,8 +20199,6 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
-	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
 	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
@@ -20227,9 +20225,9 @@
 	            numOfElements: 15,
 	            done: 0
 	        }, _this.handleDelayRangeChange = function (delay) {
-	            _this.setState({ delay: delay });
+	            _this.setState({ delay: +delay });
 	        }, _this.handleElementsAmountRangeChange = function (numOfElements) {
-	            _this.setState({ numOfElements: numOfElements });
+	            _this.setState({ numOfElements: +numOfElements });
 	        }, _this.handleSortClick = function () {
 	            _this.setState({ isSorting: true, done: 0 });
 	        }, _this.notifyIfSorted = function () {
@@ -20243,8 +20241,6 @@
 	    _createClass(App, [{
 	        key: 'render',
 	        value: function render() {
-	            var _this2 = this;
-	
 	            return _react2.default.createElement(
 	                _Grid2.default,
 	                null,
@@ -20305,16 +20301,14 @@
 	                _react2.default.createElement(
 	                    _Row2.default,
 	                    { ref: 'sortInstances' },
-	                    [].concat(_toConsumableArray(Array(1))).map(function (el, i) {
-	                        return _react2.default.createElement(
-	                            _Col2.default,
-	                            { xs: 12, sm: 6, md: 4, key: i, style: { marginBottom: '10px' } },
-	                            _react2.default.createElement(_StupidSort2.default, { isActive: _this2.state.isSorting,
-	                                delay: _this2.state.delay,
-	                                ifSorted: _this2.notifyIfSorted,
-	                                numOfElements: _this2.state.numOfElements })
-	                        );
-	                    }),
+	                    _react2.default.createElement(
+	                        _Col2.default,
+	                        { xs: 12, sm: 6, md: 4, style: { marginBottom: '10px' } },
+	                        _react2.default.createElement(_StupidSort2.default, { isActive: this.state.isSorting,
+	                            delay: this.state.delay,
+	                            ifSorted: this.notifyIfSorted,
+	                            numOfElements: this.state.numOfElements })
+	                    ),
 	                    _react2.default.createElement(
 	                        _Col2.default,
 	                        { xs: 12, sm: 6, md: 4, style: { marginBottom: '10px' } },
@@ -22288,19 +22282,9 @@
 	    value: true
 	});
 	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	var _BaseSort2 = __webpack_require__(233);
 	
-	var _react = __webpack_require__(1);
-	
-	var _react2 = _interopRequireDefault(_react);
-	
-	var _Bar = __webpack_require__(218);
-	
-	var _Bar2 = _interopRequireDefault(_Bar);
-	
-	var _SortFooter = __webpack_require__(221);
-	
-	var _SortFooter2 = _interopRequireDefault(_SortFooter);
+	var _BaseSort3 = _interopRequireDefault(_BaseSort2);
 	
 	var _asyncIteratorForward = __webpack_require__(231);
 	
@@ -22314,10 +22298,6 @@
 	
 	var _delayFuncPromise2 = _interopRequireDefault(_delayFuncPromise);
 	
-	var _getRandomArray = __webpack_require__(227);
-	
-	var _getRandomArray2 = _interopRequireDefault(_getRandomArray);
-	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -22326,8 +22306,8 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var StupidSort = function (_React$Component) {
-	    _inherits(StupidSort, _React$Component);
+	var StupidSort = function (_BaseSort) {
+	    _inherits(StupidSort, _BaseSort);
 	
 	    function StupidSort() {
 	        var _Object$getPrototypeO;
@@ -22340,35 +22320,8 @@
 	            args[_key] = arguments[_key];
 	        }
 	
-	        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_Object$getPrototypeO = Object.getPrototypeOf(StupidSort)).call.apply(_Object$getPrototypeO, [this].concat(args))), _this), _this.state = {
-	            delay: 500, // delay of iteration in ms
-	            array: [], // actual array to be sorted
-	            checkInd: [], // indexes that are currentrly checked
-	            status: null, // [orderedPair, unorderedPair, swap, sorted]
-	            swaps: 0, // statistics
-	            compares: 0 // statistics
-	        }, _this.componentWillMount = function () {
-	            _this.setState({ array: (0, _getRandomArray2.default)(_this.props.numOfElements) });
-	        }, _this.componentWillReceiveProps = function (nextProps) {
-	            if (!_this.props.isActive && nextProps.isActive) {
-	                // check if isActive changed
-	                _this.setState({
-	                    swaps: 0,
-	                    compares: 0
-	                });
-	                _this.handleStartClick();
-	            }
-	            if (_this.props.numOfElements !== nextProps.numOfElements) {
-	                // check if numOfElements changed
-	                _this.setState({
-	                    status: null,
-	                    array: (0, _getRandomArray2.default)(nextProps.numOfElements),
-	                    swaps: 0,
-	                    compares: 0
-	                });
-	            }
-	        }, _this.handleStartClick = function () {
-	            if (_this.state.status === 'sorted') _this.setState({ array: (0, _getRandomArray2.default)(_this.props.numOfElements) });
+	        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_Object$getPrototypeO = Object.getPrototypeOf(StupidSort)).call.apply(_Object$getPrototypeO, [this].concat(args))), _this), _this.name = 'Stupid sort', _this.handleStartClick = function () {
+	            _this.resetState();
 	
 	            (0, _asyncIteratorForward2.default)(
 	            // number of iteration steps
@@ -22414,55 +22367,11 @@
 	                    });
 	                });
 	            });
-	        }, _this.resolveBarColor = function (i) {
-	            if (_this.state.checkInd.indexOf(i) !== -1) {
-	                // if i is present in this.state.checkInd
-	                switch (_this.state.status) {
-	                    case 'orderedPair':
-	                        return '#53EA53';
-	                    case 'unorderedPair':
-	                        return '#f0ad4e';
-	                    case 'swap':
-	                        return '#c9302c';
-	                    default:
-	                        return;
-	                }
-	            }
 	        }, _temp), _possibleConstructorReturn(_this, _ret);
 	    }
 	
-	    // fill up array with random values in range [1; 100]
-	
-	
-	    _createClass(StupidSort, [{
-	        key: 'render',
-	        value: function render() {
-	            var _this2 = this;
-	
-	            return _react2.default.createElement(
-	                'div',
-	                { style: { border: '1px solid #ccc' } },
-	                _react2.default.createElement(
-	                    'div',
-	                    { style: { textAlign: 'center' } },
-	                    'Stupid sort'
-	                ),
-	                this.state.array.map(function (el, i) {
-	                    return _react2.default.createElement(_Bar2.default, { amount: el,
-	                        key: i,
-	                        color: _this2.resolveBarColor(i),
-	                        className: _this2.state.status === 'sorted' ? 'Bar__bar_sorted' : 'Bar__bar_unsorted' });
-	                }),
-	                _react2.default.createElement(_SortFooter2.default, { delay: this.props.delay,
-	                    compares: this.state.compares,
-	                    swaps: this.state.swaps
-	                })
-	            );
-	        }
-	    }]);
-	
 	    return StupidSort;
-	}(_react2.default.Component);
+	}(_BaseSort3.default);
 	
 	exports.default = StupidSort;
 
@@ -22751,19 +22660,9 @@
 	    value: true
 	});
 	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	var _BaseSort2 = __webpack_require__(233);
 	
-	var _react = __webpack_require__(1);
-	
-	var _react2 = _interopRequireDefault(_react);
-	
-	var _Bar = __webpack_require__(218);
-	
-	var _Bar2 = _interopRequireDefault(_Bar);
-	
-	var _SortFooter = __webpack_require__(221);
-	
-	var _SortFooter2 = _interopRequireDefault(_SortFooter);
+	var _BaseSort3 = _interopRequireDefault(_BaseSort2);
 	
 	var _asyncIteratorForward = __webpack_require__(231);
 	
@@ -22781,10 +22680,6 @@
 	
 	var _delayFuncPromise2 = _interopRequireDefault(_delayFuncPromise);
 	
-	var _getRandomArray = __webpack_require__(227);
-	
-	var _getRandomArray2 = _interopRequireDefault(_getRandomArray);
-	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -22793,50 +22688,22 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var StupidSort = function (_React$Component) {
-	    _inherits(StupidSort, _React$Component);
+	var BubbleSort = function (_BaseSort) {
+	    _inherits(BubbleSort, _BaseSort);
 	
-	    function StupidSort() {
+	    function BubbleSort() {
 	        var _Object$getPrototypeO;
 	
 	        var _temp, _this, _ret;
 	
-	        _classCallCheck(this, StupidSort);
+	        _classCallCheck(this, BubbleSort);
 	
 	        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
 	            args[_key] = arguments[_key];
 	        }
 	
-	        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_Object$getPrototypeO = Object.getPrototypeOf(StupidSort)).call.apply(_Object$getPrototypeO, [this].concat(args))), _this), _this.state = {
-	            delay: 500, // delay of iteration in ms
-	            array: [], // actual array to be sorted
-	            checkInd: [], // indexes that are currentrly checked
-	            status: null, // [orderedPair, unorderedPair, swap, sorted]
-	            swaps: 0, // statistics
-	            compares: 0 // statistics
-	        }, _this.componentWillMount = function () {
-	            _this.setState({ array: (0, _getRandomArray2.default)(_this.props.numOfElements) });
-	        }, _this.componentWillReceiveProps = function (nextProps) {
-	            if (!_this.props.isActive && nextProps.isActive) {
-	                // check if isActive changed
-	                _this.setState({
-	                    swaps: 0,
-	                    compares: 0
-	                });
-	                _this.handleStartClick();
-	            }
-	            if (_this.props.numOfElements !== nextProps.numOfElements) {
-	                // check if numOfElements changed
-	                _this.setState({
-	                    status: null,
-	                    array: (0, _getRandomArray2.default)(nextProps.numOfElements),
-	                    swaps: 0,
-	                    compares: 0
-	                });
-	            }
-	        }, _this.handleStartClick = function () {
-	            if (_this.state.status === 'sorted') _this.setState({ array: (0, _getRandomArray2.default)(_this.props.numOfElements) });
-	
+	        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_Object$getPrototypeO = Object.getPrototypeOf(BubbleSort)).call.apply(_Object$getPrototypeO, [this].concat(args))), _this), _this.name = 'Bubble sort', _this.handleStartClick = function () {
+	            _this.resetState();
 	            var i = _this.props.numOfElements;
 	
 	            (0, _asyncIteratorBack2.default)(
@@ -22888,60 +22755,15 @@
 	                        checkInd: [],
 	                        status: 'sorted'
 	                    });
-	                    console.log('outer iteration is over');
 	                });
 	            });
-	        }, _this.resolveBarColor = function (i) {
-	            if (_this.state.checkInd.indexOf(i) !== -1) {
-	                // if i is present in this.state.checkInd
-	                switch (_this.state.status) {
-	                    case 'orderedPair':
-	                        return '#53EA53';
-	                    case 'unorderedPair':
-	                        return '#f0ad4e';
-	                    case 'swap':
-	                        return '#c9302c';
-	                    default:
-	                        return;
-	                }
-	            }
 	        }, _temp), _possibleConstructorReturn(_this, _ret);
 	    }
 	
-	    // fill up array with random values in range [1; 100]
+	    return BubbleSort;
+	}(_BaseSort3.default);
 	
-	
-	    _createClass(StupidSort, [{
-	        key: 'render',
-	        value: function render() {
-	            var _this2 = this;
-	
-	            return _react2.default.createElement(
-	                'div',
-	                { style: { border: '1px solid #ccc' } },
-	                _react2.default.createElement(
-	                    'div',
-	                    { style: { textAlign: 'center' } },
-	                    'Bubble sort'
-	                ),
-	                this.state.array.map(function (el, i) {
-	                    return _react2.default.createElement(_Bar2.default, { amount: el,
-	                        key: i,
-	                        color: _this2.resolveBarColor(i),
-	                        className: _this2.state.status === 'sorted' ? 'Bar__bar_sorted' : 'Bar__bar_unsorted' });
-	                }),
-	                _react2.default.createElement(_SortFooter2.default, { delay: this.props.delay,
-	                    compares: this.state.compares,
-	                    swaps: this.state.swaps
-	                })
-	            );
-	        }
-	    }]);
-	
-	    return StupidSort;
-	}(_react2.default.Component);
-	
-	exports.default = StupidSort;
+	exports.default = BubbleSort;
 
 /***/ },
 /* 229 */,
@@ -23029,6 +22851,140 @@
 	    loop.next();
 	    return loop;
 	}
+
+/***/ },
+/* 232 */,
+/* 233 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _Bar = __webpack_require__(218);
+	
+	var _Bar2 = _interopRequireDefault(_Bar);
+	
+	var _SortFooter = __webpack_require__(221);
+	
+	var _SortFooter2 = _interopRequireDefault(_SortFooter);
+	
+	var _getRandomArray = __webpack_require__(227);
+	
+	var _getRandomArray2 = _interopRequireDefault(_getRandomArray);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var BaseSort = function (_React$Component) {
+	    _inherits(BaseSort, _React$Component);
+	
+	    function BaseSort() {
+	        var _Object$getPrototypeO;
+	
+	        var _temp, _this, _ret;
+	
+	        _classCallCheck(this, BaseSort);
+	
+	        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+	            args[_key] = arguments[_key];
+	        }
+	
+	        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_Object$getPrototypeO = Object.getPrototypeOf(BaseSort)).call.apply(_Object$getPrototypeO, [this].concat(args))), _this), _this.state = {
+	            array: [], // actual array to be sorted
+	            checkInd: [], // indexes that are currentrly checked
+	            status: null, // [orderedPair, unorderedPair, swap, sorted]
+	            swaps: 0, // statistics
+	            compares: 0 // statistics
+	        }, _this.componentWillMount = function () {
+	            _this.setState({ array: (0, _getRandomArray2.default)(_this.props.numOfElements) });
+	        }, _this.componentWillReceiveProps = function (nextProps) {
+	            if (!_this.props.isActive && nextProps.isActive) {
+	                // check if isActive changed
+	                _this.setState({
+	                    swaps: 0,
+	                    compares: 0
+	                });
+	                _this.handleStartClick();
+	            }
+	            if (_this.props.numOfElements !== nextProps.numOfElements) {
+	                // check if numOfElements changed
+	                _this.setState({
+	                    status: null,
+	                    array: (0, _getRandomArray2.default)(nextProps.numOfElements),
+	                    swaps: 0,
+	                    compares: 0
+	                });
+	            }
+	        }, _this.resetState = function () {
+	            if (_this.state.status === 'sorted') _this.setState({
+	                array: (0, _getRandomArray2.default)(_this.props.numOfElements),
+	                status: null
+	            });
+	        }, _this.resolveBarColor = function (i) {
+	            if (_this.state.checkInd.indexOf(i) !== -1) {
+	                // if i is present in this.state.checkInd
+	                switch (_this.state.status) {
+	                    case 'orderedPair':
+	                        return '#53EA53';
+	                    case 'unorderedPair':
+	                        return '#f0ad4e';
+	                    case 'swap':
+	                        return '#c9302c';
+	                    default:
+	                        return;
+	                }
+	            }
+	        }, _temp), _possibleConstructorReturn(_this, _ret);
+	    }
+	
+	    // fill up array with random values in range [1; 100]
+	
+	
+	    _createClass(BaseSort, [{
+	        key: 'render',
+	        value: function render() {
+	            var _this2 = this;
+	
+	            return _react2.default.createElement(
+	                'div',
+	                { style: { border: '1px solid #ccc' } },
+	                _react2.default.createElement(
+	                    'div',
+	                    { style: { textAlign: 'center' } },
+	                    this.name
+	                ),
+	                this.state.array.map(function (el, i) {
+	                    return _react2.default.createElement(_Bar2.default, { amount: el,
+	                        key: i,
+	                        color: _this2.resolveBarColor(i),
+	                        className: _this2.state.status === 'sorted' ? 'Bar__bar_sorted' : 'Bar__bar_unsorted' });
+	                }),
+	                _react2.default.createElement(_SortFooter2.default, { delay: this.props.delay,
+	                    compares: this.state.compares,
+	                    swaps: this.state.swaps
+	                })
+	            );
+	        }
+	    }]);
+	
+	    return BaseSort;
+	}(_react2.default.Component);
+	
+	exports.default = BaseSort;
 
 /***/ }
 /******/ ]);

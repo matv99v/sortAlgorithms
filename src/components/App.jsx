@@ -16,11 +16,11 @@ export default class App extends React.Component {
     };
 
     handleDelayRangeChange = delay => {
-        this.setState({delay});
+        this.setState({delay: +delay});
     };
 
     handleElementsAmountRangeChange = numOfElements => {
-        this.setState({numOfElements});
+        this.setState({numOfElements: +numOfElements});
     };
 
     handleSortClick = () => {
@@ -78,16 +78,13 @@ export default class App extends React.Component {
                 </Row>
 
                 <Row ref='sortInstances'>
-                    {
-                        [...Array(1)].map((el, i) => {
-                            return <Col xs={12} sm={6} md={4} key={i} style={{marginBottom: '10px'}} >
-                                       <StupidSort isActive      = {this.state.isSorting}
-                                                   delay         = {this.state.delay}
-                                                   ifSorted      = {this.notifyIfSorted}
-                                                   numOfElements = {this.state.numOfElements} />
-                                   </Col>;
-                        })
-                    }
+
+                    <Col xs={12} sm={6} md={4} style={{marginBottom: '10px'}} >
+                        <StupidSort isActive      = {this.state.isSorting}
+                                    delay         = {this.state.delay}
+                                    ifSorted      = {this.notifyIfSorted}
+                                    numOfElements = {this.state.numOfElements} />
+                   </Col>
 
                     <Col xs={12} sm={6} md={4} style={{marginBottom: '10px'}} >
                         <BubbleSort isActive      = {this.state.isSorting}
