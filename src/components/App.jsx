@@ -1,15 +1,13 @@
 import React      from 'react';
-import StupidSort from './StupidSort.jsx';
 import Grid       from 'react-bootstrap/lib/Grid';
 import Col        from 'react-bootstrap/lib/Col';
 import Row        from 'react-bootstrap/lib/Row';
 import Button     from 'react-bootstrap/lib/Button';
-import Glyphicon  from 'react-bootstrap/lib/Glyphicon';
 import Slider     from './SortInstance/Slider.jsx';
-
+import StupidSort from './StupidSort.jsx';
+import BubbleSort from './BubbleSort.jsx';
 
 export default class App extends React.Component {
-
     state = {
         isSorting    : false,
         delay        : 250,
@@ -54,8 +52,8 @@ export default class App extends React.Component {
                 <Row >
                     <Col xs={2} sm={2} md={2}>
                         delay: {this.state.delay}
-
                     </Col>
+
                     <Col xs={10} sm={10} md={10}>
                         <Slider onRangeChange = {this.handleDelayRangeChange}
                                 value         = {this.state.delay}
@@ -74,22 +72,30 @@ export default class App extends React.Component {
                         <Slider onRangeChange = {this.handleElementsAmountRangeChange}
                                 value         = {this.state.numOfElements}
                                 min           = '2'
-                                max           = '30'
+                                max           = '50'
                                 disabled      = {this.state.isSorting} />
                     </Col>
                 </Row>
 
                 <Row ref='sortInstances'>
                     {
-                        [...Array(30)].map((el, i) => <Col xs={12} sm={6} md={4} key={i}
-                                                           style = {{marginBottom: '10px'}} >
-                                                               <StupidSort isActive      = {this.state.isSorting}
-                                                                           delay         = {this.state.delay}
-                                                                           ifSorted      = {this.notifyIfSorted}
-                                                                           numOfElements = {this.state.numOfElements} />
-                                                      </Col>
-                        )
+                        [...Array(1)].map((el, i) => {
+                            return <Col xs={12} sm={6} md={4} key={i} style={{marginBottom: '10px'}} >
+                                       <StupidSort isActive      = {this.state.isSorting}
+                                                   delay         = {this.state.delay}
+                                                   ifSorted      = {this.notifyIfSorted}
+                                                   numOfElements = {this.state.numOfElements} />
+                                   </Col>;
+                        })
                     }
+
+                    <Col xs={12} sm={6} md={4} style={{marginBottom: '10px'}} >
+                        <BubbleSort isActive      = {this.state.isSorting}
+                                    delay         = {this.state.delay}
+                                    ifSorted      = {this.notifyIfSorted}
+                                    numOfElements = {this.state.numOfElements} />
+                    </Col>
+
                 </Row>
 
 

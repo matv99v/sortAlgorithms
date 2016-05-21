@@ -1,7 +1,6 @@
 import React from 'react';
 import './Bar.less';
 
-
 export default class Bar extends React.Component {
     render() {
         return (
@@ -11,7 +10,6 @@ export default class Bar extends React.Component {
                      width          : this.props.amount + '%'
                  }} >
             </div>
-
         );
     }
 }

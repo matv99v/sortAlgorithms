@@ -1,15 +1,12 @@
 import React      from 'react';
 import Bar        from './SortInstance/Bar.jsx';
 import SortFooter from './SortInstance/SortFooter.jsx';
-import Col        from 'react-bootstrap/lib/Col';
-import Row        from 'react-bootstrap/lib/Row';
-import Grid       from 'react-bootstrap/lib/Grid';
 
+import asyncIteratorForward from '../utils/asyncIteratorForward';
+import swapArrMembers       from '../utils/swapArrMembers';
+import delayFuncPromise     from '../utils/delayFuncPromise';
+import getRandomArray       from '../utils/getRandomArray';
 
-import asyncIterator    from '../utils/asyncIterator';
-import swapArrMembers   from '../utils/swapArrMembers';
-import delayFuncPromise from '../utils/delayFuncPromise';
-import getRandomArray   from '../utils/getRandomArray';
 
 export default class StupidSort extends React.Component {
     state = {
@@ -27,14 +24,14 @@ export default class StupidSort extends React.Component {
     };
 
     componentWillReceiveProps = (nextProps) => {
-        if (!this.props.isActive && nextProps.isActive) {
+        if (!this.props.isActive && nextProps.isActive) { // check if isActive changed
             this.setState({
                 swaps    : 0,
                 compares : 0
             });
             this.handleStartClick();
         }
-        if (this.props.numOfElements !== nextProps.numOfElements) {
+        if (this.props.numOfElements !== nextProps.numOfElements) { // check if numOfElements changed
             this.setState({
                 status   : null,
                 array    : getRandomArray(nextProps.numOfElements),
@@ -45,7 +42,9 @@ export default class StupidSort extends React.Component {
     };
 
     handleStartClick = () => {
-        asyncIterator(
+        if (this.state.status === 'sorted') this.setState({ array: getRandomArray(this.props.numOfElements) });
+
+        asyncIteratorForward(
             // number of iteration steps
             this.props.numOfElements - 1,
 
@@ -55,7 +54,6 @@ export default class StupidSort extends React.Component {
                 const iNext        = iCurr + 1;
                 const {array}      = this.state;
                 const boundPromise = delayFuncPromise.bind(null, this.props.delay);
-
 
                 boundPromise( () => { // compare two elements
                     this.setState({
@@ -92,16 +90,12 @@ export default class StupidSort extends React.Component {
         );
     };
 
-    handleRangeChange = delay => {
-        this.setState({delay});
-    };
-
     resolveBarColor = (i) => {
         if (this.state.checkInd.indexOf(i) !== -1) { // if i is present in this.state.checkInd
             switch (this.state.status) {
-                case 'orderedPair'  : return '#f0ad4e';
-                case 'unorderedPair': return '#c9302c';
-                case 'swap'         : return '#53EA53';
+                case 'orderedPair'  : return '#53EA53';
+                case 'unorderedPair': return '#f0ad4e';
+                case 'swap'         : return '#c9302c';
                 default             : return;
             }
         }
