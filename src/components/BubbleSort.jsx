@@ -9,12 +9,12 @@ export default class BubbleSort extends BaseSort {
     name = 'Bubble sort';
 
     handleStartClick = () => {
-        this.resetState();
+        // if (this.state.status === 'sorted') this.resetState();
         let i = this.props.elements.length;
 
         asyncIteratorBack(
             // number of outer iteration steps
-            this.props.elements.length,
+            this.props.elements.length - 1,
 
             // outer itreration body
             loopBack => {
@@ -26,7 +26,7 @@ export default class BubbleSort extends BaseSort {
                     loopForward => {
                         const iCurr        = loopForward.getIteration();
                         const iNext        = iCurr + 1;
-                        const {array}      = this.state;
+                        const array        = this.state.array;
                         const boundPromise = delayFuncPromise.bind(null, this.props.delay);
 
                         boundPromise( () => { // compare two elements
@@ -50,7 +50,7 @@ export default class BubbleSort extends BaseSort {
                         .then(loopForward.next); // next inner iteration
                     },
 
-                    loopBack.next // inner iteration is  over
+                    loopBack.next // inner iteration is  over, calling next outer iteration
                 );
             },
 

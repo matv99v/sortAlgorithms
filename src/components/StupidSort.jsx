@@ -8,20 +8,21 @@ export default class StupidSort extends BaseSort {
     name = 'Stupid sort';
 
     handleStartClick = () => {
-        this.resetState();
+        // if (this.state.status === 'sorted') this.resetState();
 
         asyncIteratorForward(
             // number of iteration steps
-            this.props.elements.length,
+            this.props.elements.length - 1,
 
             // itreration body
             loop => {
                 const iCurr        = loop.getIteration();
                 const iNext        = iCurr + 1;
-                const {array}      = this.state;
+                const array        = this.state.array;
                 const boundPromise = delayFuncPromise.bind(null, this.props.delay);
 
                 boundPromise( () => { // compare two elements
+                    // console.log(array[iCurr], array[iNext]);
                     this.setState({
                         checkInd : [iCurr, iNext],
                         status   : array[iCurr] > array[iNext] ? 'unorderedPair' : 'orderedPair',

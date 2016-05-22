@@ -20189,11 +20189,11 @@
 	
 	var _Slider2 = _interopRequireDefault(_Slider);
 	
-	var _getRandomArray = __webpack_require__(225);
+	var _getRandomArray = __webpack_require__(217);
 	
 	var _getRandomArray2 = _interopRequireDefault(_getRandomArray);
 	
-	var _StupidSort = __webpack_require__(217);
+	var _StupidSort = __webpack_require__(218);
 	
 	var _StupidSort2 = _interopRequireDefault(_StupidSort);
 	
@@ -22292,6 +22292,27 @@
 
 /***/ },
 /* 217 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	exports.default = function (i) {
+	    var array = [];
+	
+	    while (i) {
+	        var rndNum = Math.floor(Math.random() * 100) + 1;
+	        array.push(rndNum);
+	        --i; // eslint-disable-line
+	    }
+	    return array;
+	};
+
+/***/ },
+/* 218 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -22300,7 +22321,7 @@
 	    value: true
 	});
 	
-	var _BaseSort2 = __webpack_require__(218);
+	var _BaseSort2 = __webpack_require__(219);
 	
 	var _BaseSort3 = _interopRequireDefault(_BaseSort2);
 	
@@ -22339,22 +22360,22 @@
 	        }
 	
 	        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_Object$getPrototypeO = Object.getPrototypeOf(StupidSort)).call.apply(_Object$getPrototypeO, [this].concat(args))), _this), _this.name = 'Stupid sort', _this.handleStartClick = function () {
-	            _this.resetState();
+	            // if (this.state.status === 'sorted') this.resetState();
 	
 	            (0, _asyncIteratorForward2.default)(
 	            // number of iteration steps
-	            _this.props.elements.length,
+	            _this.props.elements.length - 1,
 	
 	            // itreration body
 	            function (loop) {
 	                var iCurr = loop.getIteration();
 	                var iNext = iCurr + 1;
 	                var array = _this.state.array;
-	
 	                var boundPromise = _delayFuncPromise2.default.bind(null, _this.props.delay);
 	
 	                boundPromise(function () {
 	                    // compare two elements
+	                    // console.log(array[iCurr], array[iNext]);
 	                    _this.setState({
 	                        checkInd: [iCurr, iNext],
 	                        status: array[iCurr] > array[iNext] ? 'unorderedPair' : 'orderedPair',
@@ -22394,7 +22415,7 @@
 	exports.default = StupidSort;
 
 /***/ },
-/* 218 */
+/* 219 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -22409,13 +22430,17 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _Bar = __webpack_require__(219);
+	var _Bar = __webpack_require__(220);
 	
 	var _Bar2 = _interopRequireDefault(_Bar);
 	
-	var _SortFooter = __webpack_require__(222);
+	var _SortFooter = __webpack_require__(223);
 	
 	var _SortFooter2 = _interopRequireDefault(_SortFooter);
+	
+	var _delayFuncPromise = __webpack_require__(228);
+	
+	var _delayFuncPromise2 = _interopRequireDefault(_delayFuncPromise);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -22426,8 +22451,6 @@
 	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-	
-	// import getRandomArray from '../utils/getRandomArray';
 	
 	var BaseSort = function (_React$Component) {
 	    _inherits(BaseSort, _React$Component);
@@ -22453,15 +22476,21 @@
 	            _this.setState({ array: [].concat(_toConsumableArray(_this.props.elements)) });
 	        }, _this.componentWillReceiveProps = function (nextProps) {
 	            if (!_this.props.isActive && nextProps.isActive) {
-	                // check if isActive changed
-	                _this.setState({
-	                    swaps: 0,
-	                    compares: 0
+	                // call children's method by parent
+	                (0, _delayFuncPromise2.default)(4, function () {
+	                    return _this.setState({
+	                        swaps: 0,
+	                        compares: 0,
+	                        array: [].concat(_toConsumableArray(_this.props.elements)),
+	                        status: null
+	                    });
+	                }).then(function () {
+	                    return (0, _delayFuncPromise2.default)(4, _this.handleStartClick);
 	                });
-	                _this.handleStartClick();
 	            }
+	
 	            if (_this.props.elements.length !== nextProps.elements.length) {
-	                // check if new elements changed
+	                // recieving new props.elements from parent
 	                _this.setState({
 	                    status: null,
 	                    array: [].concat(_toConsumableArray(nextProps.elements)),
@@ -22469,11 +22498,6 @@
 	                    compares: 0
 	                });
 	            }
-	        }, _this.resetState = function () {
-	            if (_this.state.status === 'sorted') _this.setState({
-	                array: [].concat(_toConsumableArray(_this.props.elements)),
-	                status: null
-	            });
 	        }, _this.resolveBarColor = function (i) {
 	            if (_this.state.checkInd.indexOf(i) !== -1) {
 	                // if i is present in this.state.checkInd
@@ -22527,7 +22551,7 @@
 	exports.default = BaseSort;
 
 /***/ },
-/* 219 */
+/* 220 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -22542,7 +22566,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	__webpack_require__(220);
+	__webpack_require__(221);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -22578,13 +22602,13 @@
 	exports.default = Bar;
 
 /***/ },
-/* 220 */
+/* 221 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(221);
+	var content = __webpack_require__(222);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(216)(content, {});
@@ -22604,7 +22628,7 @@
 	}
 
 /***/ },
-/* 221 */
+/* 222 */
 /***/ function(module, exports, __webpack_require__) {
 
 	exports = module.exports = __webpack_require__(215)();
@@ -22618,7 +22642,7 @@
 
 
 /***/ },
-/* 222 */
+/* 223 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -22645,7 +22669,7 @@
 	
 	var _Grid2 = _interopRequireDefault(_Grid);
 	
-	__webpack_require__(223);
+	__webpack_require__(224);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -22696,13 +22720,13 @@
 	exports.default = SortFooter;
 
 /***/ },
-/* 223 */
+/* 224 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(224);
+	var content = __webpack_require__(225);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(216)(content, {});
@@ -22722,7 +22746,7 @@
 	}
 
 /***/ },
-/* 224 */
+/* 225 */
 /***/ function(module, exports, __webpack_require__) {
 
 	exports = module.exports = __webpack_require__(215)();
@@ -22734,27 +22758,6 @@
 	
 	// exports
 
-
-/***/ },
-/* 225 */
-/***/ function(module, exports) {
-
-	"use strict";
-	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	
-	exports.default = function (i) {
-	    var array = [];
-	
-	    while (i) {
-	        var rndNum = Math.floor(Math.random() * 100) + 1;
-	        array.push(rndNum);
-	        --i; // eslint-disable-line
-	    }
-	    return array;
-	};
 
 /***/ },
 /* 226 */
@@ -22853,7 +22856,7 @@
 	    value: true
 	});
 	
-	var _BaseSort2 = __webpack_require__(218);
+	var _BaseSort2 = __webpack_require__(219);
 	
 	var _BaseSort3 = _interopRequireDefault(_BaseSort2);
 	
@@ -22896,12 +22899,12 @@
 	        }
 	
 	        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_Object$getPrototypeO = Object.getPrototypeOf(BubbleSort)).call.apply(_Object$getPrototypeO, [this].concat(args))), _this), _this.name = 'Bubble sort', _this.handleStartClick = function () {
-	            _this.resetState();
+	            // if (this.state.status === 'sorted') this.resetState();
 	            var i = _this.props.elements.length;
 	
 	            (0, _asyncIteratorBack2.default)(
 	            // number of outer iteration steps
-	            _this.props.elements.length,
+	            _this.props.elements.length - 1,
 	
 	            // outer itreration body
 	            function (loopBack) {
@@ -22914,7 +22917,6 @@
 	                    var iCurr = loopForward.getIteration();
 	                    var iNext = iCurr + 1;
 	                    var array = _this.state.array;
-	
 	                    var boundPromise = _delayFuncPromise2.default.bind(null, _this.props.delay);
 	
 	                    boundPromise(function () {
@@ -22936,7 +22938,7 @@
 	                            });
 	                        }
 	                    }).then(loopForward.next); // next inner iteration
-	                }, loopBack.next // inner iteration is  over
+	                }, loopBack.next // inner iteration is  over, calling next outer iteration
 	                );
 	            },
 	

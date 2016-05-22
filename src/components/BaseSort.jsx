@@ -1,8 +1,8 @@
-import React          from 'react';
-import Bar            from './SortInstance/Bar.jsx';
-import SortFooter     from './SortInstance/SortFooter.jsx';
+import React            from 'react';
+import Bar              from './SortInstance/Bar.jsx';
+import SortFooter       from './SortInstance/SortFooter.jsx';
 
-// import getRandomArray from '../utils/getRandomArray';
+import delayFuncPromise from '../utils/delayFuncPromise';
 
 export default class BaseSort extends React.Component {
     state = {
@@ -19,14 +19,16 @@ export default class BaseSort extends React.Component {
     };
 
     componentWillReceiveProps = (nextProps) => {
-        if (!this.props.isActive && nextProps.isActive) { // check if isActive changed
-            this.setState({
+        if (!this.props.isActive && nextProps.isActive) { // call children's method by parent
+            delayFuncPromise(4, () => this.setState({
                 swaps    : 0,
-                compares : 0
-            });
-            this.handleStartClick();
+                compares : 0,
+                array    : [...this.props.elements],
+                status   : null
+            })).then(() => delayFuncPromise(4, this.handleStartClick));
         }
-        if (this.props.elements.length !== nextProps.elements.length) { // check if new elements changed
+
+        if (this.props.elements.length !== nextProps.elements.length) { // recieving new props.elements from parent
             this.setState({
                 status   : null,
                 array    : [...nextProps.elements],
@@ -34,13 +36,6 @@ export default class BaseSort extends React.Component {
                 compares : 0
             });
         }
-    };
-
-    resetState = () => {
-        if (this.state.status === 'sorted') this.setState({
-            array : [...this.props.elements],
-            status: null
-        });
     };
 
     resolveBarColor = (i) => {
