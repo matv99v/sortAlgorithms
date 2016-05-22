@@ -22700,7 +22700,7 @@
 	                    _react2.default.createElement(
 	                        _Col2.default,
 	                        { xs: 6, sm: 6, className: 'SortFooter__Col_compares' },
-	                        'compares ',
+	                        'comparisons ',
 	                        this.props.compares
 	                    ),
 	                    _react2.default.createElement(

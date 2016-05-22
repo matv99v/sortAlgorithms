@@ -10,7 +10,7 @@ export default class SortFooter extends React.Component {
             <Grid fluid>
                 <Row style={{fontSize: '11px', textAlign: 'center'}}>
                     <Col xs={6} sm={6} className='SortFooter__Col_compares'>
-                        compares {this.props.compares}
+                        comparisons {this.props.compares}
                     </Col>
                     <Col xs={6} sm={6} className='SortFooter__Col_swaps'>
                         swaps {this.props.swaps}
