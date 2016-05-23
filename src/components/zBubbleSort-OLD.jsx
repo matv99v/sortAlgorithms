@@ -1,5 +1,7 @@
 import BaseSort             from './BaseSort.jsx';
-import iterator             from '../utils/iterator';
+
+import asyncIteratorForward from '../utils/asyncIteratorForward';
+import asyncIteratorBack    from '../utils/asyncIteratorBack';
 import swapArrMembers       from '../utils/swapArrMembers';
 import delayFuncPromise     from '../utils/delayFuncPromise';
 
@@ -7,17 +9,17 @@ export default class BubbleSort extends BaseSort {
     name = 'Bubble sort';
 
     handleStartClick = () => {
-        let i = this.props.elements.length - 2;
+        let i = this.props.elements.length;
 
-        iterator(
-            // init value, final value
-            this.props.elements.length - 2, 0,
+        asyncIteratorBack(
+            // number of outer iteration steps
+            this.props.elements.length - 1,
 
             // outer itreration body
             loopBack => {
-                iterator(
-                    // init value, final value
-                    0, i--,
+                asyncIteratorForward(
+                    // number of inner iteration steps
+                    --i,
 
                     // inner itreration body
                     loopForward => {
@@ -46,6 +48,7 @@ export default class BubbleSort extends BaseSort {
                         })
                         .then(loopForward.next); // next inner iteration
                     },
+
                     loopBack.next // inner iteration is  over, calling next outer iteration
                 );
             },

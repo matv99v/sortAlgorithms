@@ -6,11 +6,11 @@ import delayFuncPromise from '../utils/delayFuncPromise';
 
 export default class BaseSort extends React.Component {
     state = {
-        array    : [], // actual array to be sorted
-        checkInd : [], // indexes that are currentrly checked
+        array    : [],   // actual array to be sorted
+        checkInd : [],   // indexes that are currentrly checked
         status   : null, // [orderedPair, unorderedPair, swap, sorted]
-        swaps    : 0, // statistics
-        compares : 0 // statistics
+        swaps    : 0,    // statistics
+        compares : 0     // statistics
     };
 
     // fill up array with random values in range [1; 100]

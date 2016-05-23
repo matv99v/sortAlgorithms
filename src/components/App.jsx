@@ -44,7 +44,7 @@ export default class App extends React.Component {
 
     render() {
         return (
-            <Grid >
+            <Grid fluid>
 
                 {/* button */}
                 <Row>
@@ -91,24 +91,22 @@ export default class App extends React.Component {
                 <Row ref='sortInstances'>
 
                     <Col xs={12} sm={6} md={4} style={{marginBottom: '10px'}} >
-                        <StupidSort isActive      = {this.state.isSorting}
-                                    delay         = {this.state.delay}
-                                    ifSorted      = {this.notifyIfSorted}
-                                    elements      = {this.state.elements}
-                                    numOfElements = {this.state.numOfElements} />
+                        <StupidSort isActive             = {this.state.isSorting}
+                                    delay                = {this.state.delay}
+                                    notifyParentIfSorted = {this.notifyIfSorted}
+                                    elements             = {this.state.elements}
+                                    numOfElements        = {this.state.numOfElements} />
                    </Col>
 
                     <Col xs={12} sm={6} md={4} style={{marginBottom: '10px'}} >
-                        <BubbleSort isActive      = {this.state.isSorting}
-                                    delay         = {this.state.delay}
-                                    ifSorted      = {this.notifyIfSorted}
-                                    elements      = {this.state.elements}
-                                    numOfElements = {this.state.numOfElements} />
+                        <BubbleSort isActive             = {this.state.isSorting}
+                                    delay                = {this.state.delay}
+                                    notifyParentIfSorted = {this.notifyIfSorted}
+                                    elements             = {this.state.elements}
+                                    numOfElements        = {this.state.numOfElements} />
                     </Col>
 
                 </Row>
-
-
             </Grid>
         );
     }

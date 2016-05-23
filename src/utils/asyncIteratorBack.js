@@ -16,14 +16,14 @@ export default function asyncLoop(iterations, iterationBody, callback) {
             }
         },
         getIteration() {
-            return index;
+            return index - 1;
         },
         break() {
             done = true;
             callback();
         },
-        reset() {
-            index = iterations;
+        reset(i = iterations + 1) {
+            index = i;
         }
     };
 

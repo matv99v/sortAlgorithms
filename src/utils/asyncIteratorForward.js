@@ -22,8 +22,8 @@ export default function asyncLoop(iterations, iterationBody, callback) {
             done = true;
             callback();
         },
-        reset() {
-            index = 0;
+        reset(i = 0) {
+            index = i;
         }
     };
 

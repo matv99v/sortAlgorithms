@@ -20251,7 +20251,7 @@
 	        value: function render() {
 	            return _react2.default.createElement(
 	                _Grid2.default,
-	                null,
+	                { fluid: true },
 	                _react2.default.createElement(
 	                    _Row2.default,
 	                    null,
@@ -20322,7 +20322,7 @@
 	                        { xs: 12, sm: 6, md: 4, style: { marginBottom: '10px' } },
 	                        _react2.default.createElement(_StupidSort2.default, { isActive: this.state.isSorting,
 	                            delay: this.state.delay,
-	                            ifSorted: this.notifyIfSorted,
+	                            notifyParentIfSorted: this.notifyIfSorted,
 	                            elements: this.state.elements,
 	                            numOfElements: this.state.numOfElements })
 	                    ),
@@ -20331,7 +20331,7 @@
 	                        { xs: 12, sm: 6, md: 4, style: { marginBottom: '10px' } },
 	                        _react2.default.createElement(_BubbleSort2.default, { isActive: this.state.isSorting,
 	                            delay: this.state.delay,
-	                            ifSorted: this.notifyIfSorted,
+	                            notifyParentIfSorted: this.notifyIfSorted,
 	                            elements: this.state.elements,
 	                            numOfElements: this.state.numOfElements })
 	                    )
@@ -22325,15 +22325,15 @@
 	
 	var _BaseSort3 = _interopRequireDefault(_BaseSort2);
 	
-	var _asyncIteratorForward = __webpack_require__(226);
+	var _iterator = __webpack_require__(227);
 	
-	var _asyncIteratorForward2 = _interopRequireDefault(_asyncIteratorForward);
+	var _iterator2 = _interopRequireDefault(_iterator);
 	
-	var _swapArrMembers = __webpack_require__(227);
+	var _swapArrMembers = __webpack_require__(228);
 	
 	var _swapArrMembers2 = _interopRequireDefault(_swapArrMembers);
 	
-	var _delayFuncPromise = __webpack_require__(228);
+	var _delayFuncPromise = __webpack_require__(226);
 	
 	var _delayFuncPromise2 = _interopRequireDefault(_delayFuncPromise);
 	
@@ -22360,13 +22360,15 @@
 	        }
 	
 	        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_Object$getPrototypeO = Object.getPrototypeOf(StupidSort)).call.apply(_Object$getPrototypeO, [this].concat(args))), _this), _this.name = 'Stupid sort', _this.handleStartClick = function () {
-	            // if (this.state.status === 'sorted') this.resetState();
 	
-	            (0, _asyncIteratorForward2.default)(
-	            // number of iteration steps
-	            _this.props.elements.length - 1,
+	            (0, _iterator2.default)(
+	            // init value
+	            0,
 	
-	            // itreration body
+	            // final value
+	            _this.props.elements.length - 2,
+	
+	            // iteration body
 	            function (loop) {
 	                var iCurr = loop.getIteration();
 	                var iNext = iCurr + 1;
@@ -22375,7 +22377,6 @@
 	
 	                boundPromise(function () {
 	                    // compare two elements
-	                    // console.log(array[iCurr], array[iNext]);
 	                    _this.setState({
 	                        checkInd: [iCurr, iNext],
 	                        status: array[iCurr] > array[iNext] ? 'unorderedPair' : 'orderedPair',
@@ -22390,16 +22391,16 @@
 	                                swaps: _this.state.swaps + 1,
 	                                status: 'swap'
 	                            });
-	                            loop.reset();
+	                            loop.resetIndexToInit();
 	                        });
 	                    }
 	                }).then(loop.next); // next iteration
 	            },
 	
-	            // iteration is  over
+	            // callback function when iteration finishes
 	            function () {
 	                (0, _delayFuncPromise2.default)(_this.props.delay, function () {
-	                    _this.props.ifSorted();
+	                    _this.props.notifyParentIfSorted();
 	                    _this.setState({
 	                        checkInd: [],
 	                        status: 'sorted'
@@ -22438,7 +22439,7 @@
 	
 	var _SortFooter2 = _interopRequireDefault(_SortFooter);
 	
-	var _delayFuncPromise = __webpack_require__(228);
+	var _delayFuncPromise = __webpack_require__(226);
 	
 	var _delayFuncPromise2 = _interopRequireDefault(_delayFuncPromise);
 	
@@ -22768,9 +22769,29 @@
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
-	exports.default = asyncLoop;
-	function asyncLoop(iterations, iterationBody, callback) {
-	    var index = 0;
+	
+	exports.default = function (ms, func) {
+	    return new Promise(function (resolve) {
+	        setTimeout(function () {
+	            func();
+	            resolve();
+	        }, ms);
+	    });
+	};
+
+/***/ },
+/* 227 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.default = iterator;
+	function iterator(initValue, finalValue, iterationBodyFunc, callBackFunc) {
+	    var increment = initValue < finalValue ? 1 : -1;
+	    var index = initValue;
 	    var done = false;
 	
 	    var loop = {
@@ -22778,23 +22799,27 @@
 	            if (done) {
 	                return;
 	            }
-	            if (index < iterations) {
-	                index++;
-	                iterationBody(loop);
+	            if (index !== finalValue + increment) {
+	                index += increment;
+	                iterationBodyFunc(loop);
 	            } else {
 	                done = true;
-	                callback(); // eslint-disable-line
+	                callBackFunc();
 	            }
 	        },
 	        getIteration: function getIteration() {
-	            return index - 1;
+	            return index - increment;
 	        },
 	        break: function _break() {
 	            done = true;
-	            callback();
+	            callBackFunc();
 	        },
-	        reset: function reset() {
-	            index = 0;
+	        resetMargins: function resetMargins(a, b) {
+	            if (a) initValue = a; // eslint-disable-line
+	            if (b) finalValue = b; // eslint-disable-line
+	        },
+	        resetIndexToInit: function resetIndexToInit() {
+	            index = initValue;
 	        }
 	    };
 	
@@ -22803,7 +22828,7 @@
 	}
 
 /***/ },
-/* 227 */
+/* 228 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -22828,25 +22853,6 @@
 	};
 
 /***/ },
-/* 228 */
-/***/ function(module, exports) {
-
-	"use strict";
-	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	
-	exports.default = function (ms, func) {
-	    return new Promise(function (resolve) {
-	        setTimeout(function () {
-	            func();
-	            resolve();
-	        }, ms);
-	    });
-	};
-
-/***/ },
 /* 229 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -22860,19 +22866,15 @@
 	
 	var _BaseSort3 = _interopRequireDefault(_BaseSort2);
 	
-	var _asyncIteratorForward = __webpack_require__(226);
+	var _iterator = __webpack_require__(227);
 	
-	var _asyncIteratorForward2 = _interopRequireDefault(_asyncIteratorForward);
+	var _iterator2 = _interopRequireDefault(_iterator);
 	
-	var _asyncIteratorBack = __webpack_require__(230);
-	
-	var _asyncIteratorBack2 = _interopRequireDefault(_asyncIteratorBack);
-	
-	var _swapArrMembers = __webpack_require__(227);
+	var _swapArrMembers = __webpack_require__(228);
 	
 	var _swapArrMembers2 = _interopRequireDefault(_swapArrMembers);
 	
-	var _delayFuncPromise = __webpack_require__(228);
+	var _delayFuncPromise = __webpack_require__(226);
 	
 	var _delayFuncPromise2 = _interopRequireDefault(_delayFuncPromise);
 	
@@ -22899,18 +22901,17 @@
 	        }
 	
 	        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_Object$getPrototypeO = Object.getPrototypeOf(BubbleSort)).call.apply(_Object$getPrototypeO, [this].concat(args))), _this), _this.name = 'Bubble sort', _this.handleStartClick = function () {
-	            // if (this.state.status === 'sorted') this.resetState();
-	            var i = _this.props.elements.length;
+	            var i = _this.props.elements.length - 2;
 	
-	            (0, _asyncIteratorBack2.default)(
-	            // number of outer iteration steps
-	            _this.props.elements.length - 1,
+	            (0, _iterator2.default)(
+	            // init value, final value
+	            _this.props.elements.length - 2, 0,
 	
 	            // outer itreration body
 	            function (loopBack) {
-	                (0, _asyncIteratorForward2.default)(
-	                // number of inner iteration steps
-	                --i,
+	                (0, _iterator2.default)(
+	                // init value, final value
+	                0, i--,
 	
 	                // inner itreration body
 	                function (loopForward) {
@@ -22945,7 +22946,7 @@
 	            // outer itreration is over
 	            function () {
 	                (0, _delayFuncPromise2.default)(_this.props.delay, function () {
-	                    _this.props.ifSorted();
+	                    _this.props.notifyParentIfSorted();
 	                    _this.setState({
 	                        checkInd: [],
 	                        status: 'sorted'
@@ -22959,49 +22960,6 @@
 	}(_BaseSort3.default);
 	
 	exports.default = BubbleSort;
-
-/***/ },
-/* 230 */
-/***/ function(module, exports) {
-
-	"use strict";
-	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.default = asyncLoop;
-	function asyncLoop(iterations, iterationBody, callback) {
-	    var index = iterations + 1;
-	    var done = false;
-	
-	    var loop = {
-	        next: function next() {
-	            if (done) {
-	                return;
-	            }
-	            if (index > 0) {
-	                index--;
-	                iterationBody(loop);
-	            } else {
-	                done = true;
-	                callback(); // eslint-disable-line
-	            }
-	        },
-	        getIteration: function getIteration() {
-	            return index;
-	        },
-	        break: function _break() {
-	            done = true;
-	            callback();
-	        },
-	        reset: function reset() {
-	            index = iterations;
-	        }
-	    };
-	
-	    loop.next();
-	    return loop;
-	}
 
 /***/ }
 /******/ ]);

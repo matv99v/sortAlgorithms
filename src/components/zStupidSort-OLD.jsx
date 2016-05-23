@@ -1,5 +1,6 @@
 import BaseSort             from './BaseSort.jsx';
-import iterator             from '../utils/iterator';
+
+import asyncIteratorForward from '../utils/asyncIteratorForward';
 import swapArrMembers       from '../utils/swapArrMembers';
 import delayFuncPromise     from '../utils/delayFuncPromise';
 
@@ -8,14 +9,11 @@ export default class StupidSort extends BaseSort {
 
     handleStartClick = () => {
 
-        iterator(
-            // init value
-            0,
+        asyncIteratorForward(
+            // number of iteration steps
+            this.props.elements.length - 1,
 
-            // final value
-            this.props.elements.length - 2,
-
-            // iteration body
+            // itreration body
             loop => {
                 const iCurr        = loop.getIteration();
                 const iNext        = iCurr + 1;
@@ -23,6 +21,7 @@ export default class StupidSort extends BaseSort {
                 const boundPromise = delayFuncPromise.bind(null, this.props.delay);
 
                 boundPromise( () => { // compare two elements
+                    // console.log(array[iCurr], array[iNext]);
                     this.setState({
                         checkInd : [iCurr, iNext],
                         status   : array[iCurr] > array[iNext] ? 'unorderedPair' : 'orderedPair',
@@ -37,14 +36,14 @@ export default class StupidSort extends BaseSort {
                                 swaps : this.state.swaps + 1,
                                 status: 'swap'
                             });
-                            loop.resetIndexToInit();
+                            loop.reset();
                         });
                     }
                 })
                 .then(loop.next); // next iteration
             },
 
-            // callback function when iteration finishes
+            // iteration is  over
             () => {
                 delayFuncPromise(this.props.delay, () => {
                     this.props.notifyParentIfSorted();
@@ -55,5 +54,5 @@ export default class StupidSort extends BaseSort {
                 });
             }
         );
-    }
+    };
 }
